@@ -1,0 +1,115 @@
+[
+  {
+    "label": "Question 16",
+    "question": "You have a customer support agent that uses the Microsoft Foundry Agent Service.\nSometimes, customers return to a session days later to continue the same support case, and the agent must resume with the full historical context. The agent must provide the following:\n* Multi-turn continuity within the session\n* Cross-session continuity for the same case\n* Access to the full interaction history, including user messages, agent messages, tool calls, and tool outputs You need to ensure that the agent automatically reloads the complete history on each new turn.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Persist only the final model response stored in the client application and prepend the response to future prompts."
+      },
+      {
+        "key": "B",
+        "text": "（B）Enable memory summarization on the agent definition to persist the context automatically."
+      },
+      {
+        "key": "C",
+        "text": "（C）Create and reuse a conversation by storing the conversation's ID and supplying the ID on subsequent requests."
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "The correct approach is to create and reuse a conversation by storing the conversation's ID and supplying that ID on subsequent requests . In Microsoft Foundry Agent Service, conversations are durable objects with unique identifiers that can be reused across sessions. The official runtime guidance states that conversations store items, including messages, tool calls, tool outputs, and other data, and are intended for multi-turn continuity, cross-session continuity, and inspection of what happened over time. This directly satisfies the requirement to resume the same support case days later with the full historical context.Persisting only the final model response is insufficient because it loses the full interaction chain, especially tool calls and tool outputs that may be essential to case state. Memory summarization is also not the best fit because the requirement asks for the complete history, not a compressed representation that may omit details.Reusing the conversation ID allows Foundry to maintain the conversation server-side so the next turn can reuse prior context without the client manually rebuilding prompts. Reference topics: Foundry Agent Service runtime components, conversations, conversation items, multi-turn continuity, cross-session continuity, and tool output history.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 17",
+    "question": "You have a Microsoft Foundry project named Project1 that contains the following:\n* An OpenAPI tool that calls an external API\n* A project connection named Connection1 that stores the API key of the external API When an agent calls the OpenAPI tool, the API returns a 401 unauthorized error, and traces show that the API key header is NOT being sent.\nYou need to ensure that the OpenAPI tool automatically includes the API key from Connection1 on all requests.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Configure the tool to use the default connection of Project1."
+      },
+      {
+        "key": "B",
+        "text": "（B）Connect the tool to Connection1."
+      },
+      {
+        "key": "C",
+        "text": "（C）Enable identity passthrough so that the tool uses the Microsoft Entra token of the caller."
+      },
+      {
+        "key": "D",
+        "text": "（D）Add the API key header manually to the OpenAPI specification."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The correct action is to connect the OpenAPI tool to Connection1 . In Microsoft Foundry Agent Service, an OpenAPI tool does not automatically use every project connection in the project. For API key authentication, the tool must be explicitly configured to use the project connection that contains the required secret.Microsoft's OpenAPI tool guidance states that API key or token authentication requires a project connection configured with the API key or token, and the tool is then created or configured to use that connection for authentication. The documentation also notes that the agent calls the external API by using the stored API key when the OpenAPI tool is configured with the project connection.Option A is incorrect because a project's default connection is not automatically the authentication source for a specific OpenAPI tool. Option C is incorrect because identity passthrough or managed identity only applies when the target API accepts Microsoft Entra ID tokens; this scenario uses an external API key. Option D is also incorrect as a credential value should not be manually embedded in the OpenAPI specification. The specification defines the security scheme, while the secret value is stored in the Foundry connection.Reference topics: OpenAPI tools, project connections, API key authentication, tool authentication configuration, and agent tracing.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 18",
+    "question": "You need to recommend an invoice review solution that resolves the issue reported by the finance department.\nWhat should you include in the recommendation?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Azure Content Understanding in Foundry Tools"
+      },
+      {
+        "key": "B",
+        "text": "（B）chat completions"
+      },
+      {
+        "key": "C",
+        "text": "（C）Azure Document Intelligence in Foundry Tools"
+      },
+      {
+        "key": "D",
+        "text": "（D）Image Analysis"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct recommendation is Azure Content Understanding in Foundry Tools . The case study states that Contoso's finance department must manually review vendor invoices to verify that invoice details match vendor contract terms, and that the invoices contain tables, logos, and varied layouts that make consistent processing difficult. It also states that the planned solution must evaluate both the visual layout and textual content of the invoices.Azure Content Understanding is designed for this type of multimodal document-processing workload.Microsoft describes Content Understanding as a Foundry Tool that processes unstructured and multimodal content, including documents and images, and transforms it into structured output for AI applications. It can use document analyzers to extract text, layout, tables, fields, and relationships from diverse document types.Chat completions alone would not reliably extract structured invoice fields from complex layouts. Azure Document Intelligence can extract OCR, layout, and tables, but Content Understanding is the better end-to- end Foundry capability for combining visual and textual understanding with structured extraction for downstream verification. Image Analysis focuses on image-level visual features and is insufficient for invoice field and table review. Reference topics: Content Understanding, document analyzers, multimodal extraction, invoice processing, tables, layout, and structured JSON output.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 19",
+    "question": "You need to recommend a solution to support the planned changes and technical requirements for Agent1 to use the product information stored in storage1.\nWhat should you include in the recommendation?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Azure Al Search"
+      },
+      {
+        "key": "B",
+        "text": "（B）Azure Translator in Foundry Tools"
+      },
+      {
+        "key": "C",
+        "text": "（C）Azure Document Intelligence in Foundry Tools"
+      },
+      {
+        "key": "D",
+        "text": "（D）Grounding with Bing Search"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct recommendation is Azure AI Search. The case study states that the product detail sheets are stored as PDFs in storage1, and that Agent1 must be enabled to retrieve and use detailed product information from those sheets. It also specifies that the indexing pipeline must enable semantic and vector search, and that Agent1 must answer natural language questions about product details by using the product sheet information.Azure AI Search is the Azure service designed to ingest content from sources such as Azure Blob Storage, create searchable indexes, and support keyword, semantic, hybrid, and vector retrieval for Retrieval Augmented Generation (RAG) solutions.Microsoft's Azure AI Search guidance states that integrated vectorization can chunk content and generate embeddings during indexing, enabling vector search over source documents. It also states that Azure AI Search supports text and vector queries and can improve raw content for search-related scenarios through enrichment pipelines. Azure Translator is unrelated to retrieval. Document Intelligence can extract document structure, but it is not the retrieval index for Agent1. Grounding with Bing Search retrieves public web content, not Contoso's private PDFs in storage1. Reference topics: Azure AI Search, RAG, semantic search, vector search, Azure Blob Storage indexing, and agent grounding.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 20",
+    "question": "Your company is piloting a customer support agent in a Microsoft Foundry project name Project1. Project1 is connected to an existing Application Insights resource, and the company ' s support team reviews runs in the Traces tab.\nThe Foundry Agent Service is configured to perform the following actions:\n* Retrieve the Application Insights connection string by calling\nproject_client.telemetry.get_application_insights_connection_string().\n* Call configure_azure_monitor(connection_string=...) to enable telemetry.\nA separate LangChain service configured to use OpenTelemetry and has the following configurations:\n* Uses AzureAIOpenTelemetryTracer(connection_string=..., enable_content_recording=False)\n* Passes the tracer by using config={ \" callbacks \" :[azure_tracer]}\nCompany policy has the following requirements:\n* Telemetry from LangChain and OpenTelemetry must be distinguishable within the same Application Insights resource.\n* Secrets and credentials must NOT be stored in prompts, tool arguments, or span attributes.\nFor each of the following statements, select Yes if the statement is true. Otherwise, select No.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_102_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:The LangChain service will appear in Traces without configuring a tracer: No Setting different OTEL_SERVICE_NAME values separates the services in Application Insights: Yes When using enable_content_recording=False, prompts and tool data will be captured in the telemetry: No The first statement is No because a separate LangChain or LangGraph application must emit telemetry through the configured tracing integration. Microsoft's LangChain tracing guidance states that you configure AzureAIOpenTelemetryTracer, attach it to the runnable or agent through callbacks, and then inspect the emitted traces in Azure Monitor. The troubleshooting guidance also states that missing LangChain or LangGraph spans are caused by tracing callbacks not being attached to the run.The second statement is Yes . In OpenTelemetry, OTEL_SERVICE_NAME maps to the service.name resource attribute. Azure Monitor Application Insights uses cloud role names to represent separate services, and Microsoft states that when multiple services emit to the same Application Insights resource, cloud role names must be set so services are represented properly.The third statement is No . enable_content_recording=False is specifically used to redact message content and tool call arguments from traces. Microsoft also advises disabling content recording in production and not storing secrets, credentials, or tokens in prompts or tool arguments. Reference topics: Microsoft Foundry tracing, LangChain tracing, OpenTelemetry service naming, Application Insights, and secure telemetry configuration.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_104_c5f438a9da7fde48.jpg"
+    ]
+  }
+]

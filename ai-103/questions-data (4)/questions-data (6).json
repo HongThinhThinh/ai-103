@@ -1,0 +1,123 @@
+[
+  {
+    "label": "質問 6",
+    "question": "You have a Microsoft Foundry project that contains a model deployment.\nYou have an application that calls the deployment by using the Azure OpenAl v1 API and DefaultAzureCredential.\nThe developers at your company receive HTTP 403 errors when they send inference requests, even after running az login.\nYou need to ensure that the developers can perform model inference. The solution must follow the principle of least privilege.\nWhich role-based access control (RBAC) role should you assign to the developers?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Cognitive Services OpenAl User"
+      },
+      {
+        "key": "B",
+        "text": "（B）Cognitive Services Data Reader"
+      },
+      {
+        "key": "C",
+        "text": "（C）Cognitive Services User"
+      },
+      {
+        "key": "D",
+        "text": "（D）Contributor"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct role is Cognitive Services OpenAl User . The application is using DefaultAzureCredential, so az login only proves the developer's Microsoft Entra identity and enables token acquisition. It does not by itself grant authorization to the model deployment. Azure OpenAI and Microsoft Foundry separate authentication from authorization; Microsoft Entra ID provides token-based authentication, while Azure RBAC controls whether the signed-in principal can perform data-plane actions such as model inference. Microsoft's Foundry guidance states that Microsoft Entra ID supports granular RBAC and that data-plane operations include runtime usage such as chat completions and embedding generation.For Azure OpenAI resources, the Cognitive Services OpenAI User role specifically allows users to make inference API calls with Microsoft Entra ID against deployed models, while preventing higher-privilege actions such as creating deployments, copying keys, fine-tuning, or managing the resource.The other roles are not least privilege. Contributor grants broad management-plane permissions. Cognitive Services User is broader and less specific than the Azure OpenAI inference role. Cognitive Services Data Reader is read-oriented and does not provide the required model inference data action. Reference topics:Microsoft Foundry authentication and authorization, Azure RBAC, Microsoft Entra ID keyless authentication, Azure OpenAI v1 API, and least-privilege model inference.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 7",
+    "question": "You have a Microsoft Foundry project that contains a prompt agent used by a customer support web app.\nThe agent is invoked from a Python service that does NOT run in the Foundry portal.\nYou need to implement end-to-end tracing to capture latency breakdowns and exceptions across agent runs.\nWhich two components can you use? Each correct answer presents a complete solution.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）a Log Analytics workspace"
+      },
+      {
+        "key": "B",
+        "text": "（B）OpenTelemetry"
+      },
+      {
+        "key": "C",
+        "text": "（C）Application Insights"
+      },
+      {
+        "key": "D",
+        "text": "（D）the Azure Monitor Agent"
+      },
+      {
+        "key": "E",
+        "text": "（E）Microsoft Sentinel"
+      }
+    ],
+    "correctAnswer": "B、C",
+    "explanation": "The correct components are OpenTelemetry and Application Insights . Microsoft Foundry tracing for prompt agents is designed to capture detailed telemetry for agent execution, including latency, exceptions, prompt activity, and retrieval operations. For a Python service that invokes the agent outside the Foundry portal, OpenTelemetry is the appropriate instrumentation mechanism because the Foundry SDK tracing setup uses OpenTelemetry packages and Azure SDK tracing integration for client-side traces. This enables distributed tracing across the external Python service and the agent run.Application Insights is the telemetry backend used by Foundry tracing. The Foundry tracing setup requires an Azure Monitor Application Insights resource to store traces, and traces can then be viewed in Foundry or directly in Azure Monitor Application Insights. Application Insights also provides performance and failure investigation experiences for response times, slow transactions, errors, and exceptions.A Log Analytics workspace may underlie Application Insights data storage, but it is not the agent tracing component itself. The Azure Monitor Agent collects machine and guest telemetry, not application-level agent traces from a Python SDK invocation. Microsoft Sentinel is a security information and event management solution, not an end-to-end agent tracing mechanism. Reference topics: Microsoft Foundry tracing, Azure Monitor Application Insights, OpenTelemetry instrumentation, prompt agent observability, and Python SDK telemetry.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 8",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nYou use a GitHub Actions workflow for CI/CD.\nYou need to configure the workflow to automatically evaluate the agent when a pull request (PR) is created and prevent branches from merging if the evaluation results do NOT meet the defined thresholds.\nHow should you configure the workflow? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_86_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:Authentication method: An Azure Login action that uses OpenID Connect (OIDC) If the evaluation results are NOT met, configure the workflow to: Fail The correct authentication method is Azure Login with OpenID Connect (OIDC) . Microsoft Foundry's GitHub Actions evaluation guidance recommends Microsoft Entra ID authentication and states that authentication can be automated by using the Azure Login GitHub action with OpenID Connect. The sample evaluation workflow also grants id-token: write, runs azure/login@v2, and then invokes the Microsoft AI Agent Evaluation action. This is the appropriate CI/CD authentication pattern because it avoids long-lived personal access tokens and supports secure federated authentication from GitHub Actions into Azure.The workflow should be configured to fail when evaluation thresholds are not met. Foundry's evaluation GitHub Action is designed to automate pre-production assessment of Microsoft Foundry agents in CI/CD pipelines and produce evaluation results for the configured evaluators and test dataset. A failed GitHub Actions check can then be enforced through branch protection so the PR cannot merge until the quality gate passes. Locking the target branch or sending an alert does not directly implement a CI quality gate. Reference topics: Microsoft Foundry agent evaluation, GitHub Actions evaluation workflow, Microsoft Entra authentication, Azure Login with OIDC, pull-request quality gates, and CI/CD governance.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_87_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 9",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nThe agent ingests scanned PDF vendor invoices that contain tables and embedded QR codes.\nThe agent must preserve the PDF layout in the extracted output to ensure that downstream processing can reference sections and tables.\nYou plan to call Azure Content Understanding in Foundry Tools.\nYou need to extract content and layout elements and detect QR codes without requiring a language model deployment.\nWhich built-in analyzer should you use?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）prebuilt-layout"
+      },
+      {
+        "key": "B",
+        "text": "（B）prebuilt-documentFieldSchema"
+      },
+      {
+        "key": "C",
+        "text": "（C）prebuilt-read"
+      },
+      {
+        "key": "D",
+        "text": "（D）prebuilt-documentSearch"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct built-in analyzer is prebuilt-layout because the requirement is to preserve document layout while extracting content from scanned PDFs. Microsoft's Content Understanding prebuilt analyzer guidance states that prebuilt-layout extracts content and layout elements such as words, figures, paragraphs, and tables, identifies document structure including sections and formatting, and provides detailed layout information beyond basic text extraction. It also states that prebuilt-layout does not require a language model or embedding model, which directly satisfies the no language model deployment requirement.QR codes are handled through barcode extraction. The analyzer configuration reference states that enableBarcode detects and extracts barcodes and QR codes, returns decoded values, and supports QR Code and Micro QR Code among other barcode types. This option is supported by document-based analyzers, making it compatible with layout-oriented document processing.prebuilt-read is insufficient because it provides OCR and barcode extraction but foundational text extraction without layout analysis. prebuilt-documentSearch is optimized for RAG ingestion and semantic analysis, which is broader than required. prebuilt-documentFieldSchema proposes extraction schemas rather than extracting full document layout. Reference topics: Content Understanding prebuilt analyzers, layout analysis, OCR, barcode detection, QR code extraction, and document-based analyzers.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 10",
+    "question": "You have a chat app in a Microsoft Foundry project and an Azure AI Search vectorized index.\nYou need to connect to the index to meet the following requirements:\n* Complex questions must retrieve information from multiple chunks.\n* Multi-turn conversations must influence retrieval planning.\n* Retrievals must run in parallel to reduce latency.\nWhich retrieval approach should you use?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）classic Retrieval Augmented Generation (RAG)"
+      },
+      {
+        "key": "B",
+        "text": "（B）chain of thought"
+      },
+      {
+        "key": "C",
+        "text": "（C）agentic Retrieval Augmented Generation (RAG)"
+      },
+      {
+        "key": "D",
+        "text": "（D）iterative retrieval"
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "The correct answer is agentic Retrieval Augmented Generation (RAG) because the requirements describe the agentic retrieval pipeline in Azure AI Search. Agentic retrieval is designed for chat and copilot scenarios where a user's request can be complex, conversational, and dependent on prior turns. Azure AI Search agentic retrieval uses an LLM-assisted planning stage to break a complex request into focused subqueries, allowing the system to retrieve grounding information from multiple chunks rather than relying on a single query path.Microsoft's Azure AI Search guidance describes agentic retrieval as a multi-query pipeline for complex questions in chat and agent workflows, with subqueries that can include chat history for additional context.This also satisfies the latency requirement because agentic retrieval runs the generated subqueries in parallel and then merges and reranks the best results for use by the generative model. Classic RAG is simpler and typically sends a single query to search, making it less suitable for multi-hop or conversational retrieval planning. Chain of thought is a reasoning technique, not an Azure AI Search retrieval approach, and iterative retrieval does not specifically provide the built-in query planning, conversation-aware retrieval, and parallel execution described here. Reference topics: Azure AI Search agentic retrieval, RAG with Azure AI Search, knowledge bases, query planning, and generative AI grounding.",
+    "explanationImages": []
+  }
+]

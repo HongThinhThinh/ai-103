@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-103 Practice Exam</title>
+  <style>
+    :root {
+      --bg: #0f0f23;
+      --surface: #1a1a2e;
+      --surface2: #222240;
+      --border: #2d2d50;
+      --text: #e4e4f0;
+      --muted: #8888aa;
+      --primary: #6366f1;
+      --primary-glow: rgba(99,102,241,0.15);
+      --success: #10b981;
+      --success-bg: rgba(16,185,129,0.1);
+      --danger: #ef4444;
+      --danger-bg: rgba(239,68,68,0.1);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245,158,11,0.1);
+      --accent: #8b5cf6;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.3);
+      --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    [data-theme="light"] {
+      --bg: #f0f2f8;
+      --surface: #ffffff;
+      --surface2: #f8f9fc;
+      --border: #e2e5f0;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --primary-glow: rgba(99,102,241,0.08);
+      --success-bg: rgba(16,185,129,0.08);
+      --danger-bg: rgba(239,68,68,0.06);
+      --warning-bg: rgba(245,158,11,0.06);
+      --shadow: 0 8px 32px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .app { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* Header */
+    .header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 28px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow);
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .badge-exam { padding: 4px 12px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); font-weight: 700; font-size: 12px; border: 1px solid var(--primary); }
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn { padding: 10px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-weight: 600; cursor: pointer; transition: var(--transition); font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; }
+    .btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn-primary:hover { background: #5558e6; color: white; }
+    .btn-sm { padding: 6px 14px; font-size: 13px; }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px;
+    }
+    .stat-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px 20px; text-align: center;
+    }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+    .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+    .stat-item.success .stat-value { color: var(--success); }
+    .stat-item.danger .stat-value { color: var(--danger); }
+    .stat-item.warning .stat-value { color: var(--warning); }
+
+    /* Controls */
+    .controls {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px;
+      padding: 16px 20px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .controls select, .controls input {
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 14px;
+    }
+    .controls select:focus, .controls input:focus { outline: none; border-color: var(--primary); }
+    .filter-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+
+    /* Progress Bar */
+    .progress-wrap { margin-bottom: 24px; }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.5s ease; }
+    .progress-text { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+
+    /* Question Card */
+    .question-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 32px; margin-bottom: 20px; box-shadow: var(--shadow); transition: var(--transition);
+    }
+    .question-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .q-number { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; }
+    .q-topic { padding: 4px 10px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); font-size: 12px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent); }
+    .q-type { padding: 4px 10px; border-radius: 999px; background: var(--surface2); color: var(--muted); font-size: 12px; font-weight: 600; }
+    .question-text { font-size: 16px; line-height: 1.7; margin-bottom: 20px; white-space: pre-line; }
+    .question-images { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+    .q-image { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s; }
+    .q-image:hover { transform: scale(1.02); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+
+    /* Options */
+    .options-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .option-item {
+      display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px;
+      border: 2px solid var(--border); border-radius: var(--radius-sm);
+      cursor: pointer; transition: var(--transition); position: relative;
+    }
+    .option-item:hover { border-color: var(--primary); background: var(--primary-glow); }
+    .option-item.selected { border-color: var(--primary); background: var(--primary-glow); }
+    .option-item.correct { border-color: var(--success); background: var(--success-bg); }
+    .option-item.incorrect { border-color: var(--danger); background: var(--danger-bg); }
+    .option-item.missed { border-color: var(--warning); background: var(--warning-bg); }
+    .option-key {
+      min-width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; background: var(--surface2); font-weight: 800; font-size: 14px;
+      border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .option-item.correct .option-key { background: var(--success); color: white; border-color: var(--success); }
+    .option-item.incorrect .option-key { background: var(--danger); color: white; border-color: var(--danger); }
+    .option-item.missed .option-key { background: var(--warning); color: white; border-color: var(--warning); }
+    .option-text { font-size: 15px; padding-top: 4px; }
+
+    /* Yes/No Statements */
+    .yn-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .yn-label { font-size: 13px; color: var(--muted); min-width: 24px; font-weight: 700; }
+    .yn-btn { flex: 1; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+
+    /* Explanation */
+    .explanation {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 20px; margin-top: 16px; display: none;
+    }
+    .explanation.show { display: block; animation: fadeIn 0.3s ease; }
+    .explanation-title { font-weight: 700; color: var(--success); margin-bottom: 8px; font-size: 14px; }
+    .explanation-text { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .answer-badge { margin-top: 12px; font-weight: 700; color: var(--success); font-size: 14px; }
+
+    /* Navigation */
+    .nav-buttons { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; padding-bottom: 40px; }
+    .page-info { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+    /* Question Grid */
+    .question-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px;
+      margin-bottom: 24px; padding: 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .q-grid-item {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;
+      border: 2px solid var(--border); background: var(--surface2); transition: var(--transition);
+    }
+    .q-grid-item:hover { border-color: var(--primary); transform: scale(1.08); }
+    .q-grid-item.answered-correct { background: var(--success-bg); border-color: var(--success); color: var(--success); }
+    .q-grid-item.answered-wrong { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+    .q-grid-item.current { border-color: var(--primary); background: var(--primary-glow); color: var(--primary); box-shadow: 0 0 12px var(--primary-glow); }
+
+    /* Mode tabs */
+    .mode-tabs { display: flex; gap: 4px; background: var(--surface2); padding: 4px; border-radius: var(--radius-sm); }
+    .mode-tab { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: var(--transition); color: var(--muted); border: none; background: none; }
+    .mode-tab.active { background: var(--primary); color: white; }
+    .mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* Timer */
+    .timer { font-family: monospace; font-size: 16px; font-weight: 700; color: var(--primary); padding: 6px 12px; background: var(--primary-glow); border-radius: 8px; }
+
+    /* Results Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); display: none; z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 40px; max-width: 480px; width: 90%; text-align: center; box-shadow: var(--shadow);
+    }
+    .modal h2 { font-size: 24px; margin-bottom: 8px; }
+    .score-big { font-size: 56px; font-weight: 900; margin: 20px 0; }
+    .score-big.pass { color: var(--success); }
+    .score-big.fail { color: var(--danger); }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+    .result-grid div { padding: 12px; background: var(--surface2); border-radius: 8px; }
+    .result-grid strong { display: block; font-size: 20px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .app { padding: 12px; }
+      .header { flex-direction: column; gap: 12px; align-items: stretch; }
+      .header-actions { justify-content: center; }
+      .question-card { padding: 20px; }
+      .stats-bar { grid-template-columns: repeat(2, 1fr); }
+      .controls { flex-direction: column; align-items: stretch; }
+      .question-grid { grid-template-columns: repeat(auto-fill, minmax(36px, 1fr)); }
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">AI-103</div>
+        <span class="badge-exam">Practice Exam</span>
+      </div>
+      <div class="header-actions">
+        <div class="timer" id="timer">00:00:00</div>
+        <div class="mode-tabs">
+          <button class="mode-tab active" data-mode="practice">Practice</button>
+          <button class="mode-tab" data-mode="exam">Exam</button>
+          <button class="mode-tab" data-mode="review">Review</button>
+        </div>
+        <button class="btn btn-sm" id="themeToggle" title="Toggle theme">&#9728;</button>
+        <a class="btn btn-sm" href="./practice.html" title="Học lý thuyết">&#128218; Study</a>
+      </div>
+    </header>
+
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-value" id="totalQ">0</div><div class="stat-label">Questions</div></div>
+      <div class="stat-item success"><div class="stat-value" id="correctQ">0</div><div class="stat-label">Correct</div></div>
+      <div class="stat-item danger"><div class="stat-value" id="wrongQ">0</div><div class="stat-label">Wrong</div></div>
+      <div class="stat-item warning"><div class="stat-value" id="scoreQ">0%</div><div class="stat-label">Score</div></div>
+      <div class="stat-item"><div class="stat-value" id="remainQ">0</div><div class="stat-label">Remaining</div></div>
+    </div>
+
+    <div class="controls">
+      <span class="filter-label">Topic:</span>
+      <select id="topicFilter"><option value="all">All Topics</option></select>
+      <span class="filter-label">Type:</span>
+      <select id="typeFilter">
+        <option value="all">All Types</option>
+        <option value="single">Single Choice</option>
+        <option value="multiple">Multiple Select</option>
+        <option value="yesno">Yes/No</option>
+        <option value="drag-drop">Drag &amp; Drop</option>
+      </select>
+      <span class="filter-label">Status:</span>
+      <select id="statusFilter">
+        <option value="all">All</option>
+        <option value="unanswered">Unanswered</option>
+        <option value="correct">Correct</option>
+        <option value="wrong">Wrong</option>
+        <option value="bookmarked">Bookmarked</option>
+      </select>
+      <button class="btn btn-sm" id="shuffleBtn">Shuffle</button>
+      <button class="btn btn-sm" id="resetBtn">Reset</button>
+      <button class="btn btn-sm btn-primary" id="resultsBtn">Results</button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text"><span id="progressLabel">0 / 0 answered</span><span id="progressPct">0%</span></div>
+    </div>
+
+    <div class="question-grid" id="questionGrid"></div>
+
+    <div id="questionArea"></div>
+
+    <div class="nav-buttons">
+      <button class="btn" id="prevBtn">&larr; Previous</button>
+      <span class="page-info" id="pageInfo">1 / 1</span>
+      <button class="btn" id="nextBtn">Next &rarr;</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="resultsModal">
+    <div class="modal">
+      <h2>Exam Results</h2>
+      <div class="score-big" id="finalScore">0%</div>
+      <div class="result-grid">
+        <div><strong id="fCorrect" style="color:var(--success)">0</strong><small style="color:var(--muted)">Correct</small></div>
+        <div><strong id="fWrong" style="color:var(--danger)">0</strong><small style="color:var(--muted)">Wrong</small></div>
+      </div>
+      <p id="passMsg" style="color:var(--muted);margin-bottom:20px"></p>
+      <button class="btn btn-primary" onclick="document.getElementById('resultsModal').classList.remove('show')">Close</button>
+      <button class="btn" onclick="location.reload()" style="margin-left:8px">Retry</button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    let questions = [], filtered = [], current = 0, answers = {}, bookmarked = new Set(), mode = 'practice', seconds = 0, timerInterval = null;
+
+    async function loadQuestions() {
+      // Try fetch first (works with HTTP server)
+      try {
+        const resp = await fetch('./questions.json');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        return data.questions;
+      } catch(e) {
+        console.warn('Fetch failed, trying script tag fallback:', e.message);
+      }
+      // Fallback: load via script tag (works with file://)
+      return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = './questions-inline.js';
+        s.onload = () => resolve(window._INLINE_QUESTIONS || []);
+        s.onerror = () => reject(new Error('Cannot load questions. Please use a local HTTP server: python3 -m http.server 8080'));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function init() {
+      try {
+        questions = await loadQuestions();
+        document.getElementById('totalQ').textContent = questions.length;
+
+        const topics = [...new Set(questions.map(q => q.topic))].sort();
+        const sel = document.getElementById('topicFilter');
+        topics.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; sel.appendChild(o); });
+
+        const saved = localStorage.getItem('ai103_answers');
+        if (saved) try { answers = JSON.parse(saved); } catch(e) {}
+        const savedBm = localStorage.getItem('ai103_bookmarks');
+        if (savedBm) try { bookmarked = new Set(JSON.parse(savedBm)); } catch(e) {}
+
+        applyFilters();
+        startTimer();
+      } catch (e) {
+        document.getElementById('questionArea').innerHTML = '<div class="question-card"><p style="color:var(--danger)">Failed to load questions: '+e.message+'</p></div>';
+      }
+    }
+
+    function applyFilters() {
+      const topic = document.getElementById('topicFilter').value;
+      const type = document.getElementById('typeFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      filtered = questions.filter(q => {
+        if (topic !== 'all' && q.topic !== topic) return false;
+        if (type !== 'all' && q.type !== type) return false;
+        if (status === 'unanswered' && answers[q.id] && answers[q.id].checked) return false;
+        if (status === 'correct' && (!answers[q.id] || !answers[q.id].correct)) return false;
+        if (status === 'wrong' && (!answers[q.id] || answers[q.id].correct !== false || !answers[q.id].checked)) return false;
+        if (status === 'bookmarked' && !bookmarked.has(q.id)) return false;
+        return true;
+      });
+      current = 0;
+      render();
+    }
+
+    function render() { renderGrid(); renderQuestion(); updateStats(); updateProgress(); }
+
+    function renderGrid() {
+      const grid = document.getElementById('questionGrid');
+      grid.innerHTML = filtered.map((q, i) => {
+        let cls = 'q-grid-item';
+        if (i === current) cls += ' current';
+        if (answers[q.id] && answers[q.id].checked) cls += answers[q.id].correct ? ' answered-correct' : ' answered-wrong';
+        return '<div class="'+cls+'" onclick="window._goTo('+i+')" title="Q'+q.id+'">'+q.id+'</div>';
+      }).join('');
+    }
+
+    function renderQuestion() {
+      if (!filtered.length) {
+        document.getElementById('questionArea').innerHTML = '<div class="question-card"><p>No questions match your filters.</p></div>';
+        document.getElementById('pageInfo').textContent = '0 / 0';
+        return;
+      }
+      const q = filtered[current];
+      const ans = answers[q.id];
+      const checked = ans && ans.checked;
+      const showResult = checked && (mode === 'practice' || mode === 'review');
+      const isMulti = q.type === 'multi_select' || q.type === 'multiple';
+
+      let html = '<div class="question-card">';
+      html += '<div class="question-meta">';
+      html += '<span class="q-number">' + (q.label || 'Q' + q.id) + '</span>';
+      html += '<span class="q-topic">' + esc(q.topic) + '</span>';
+      html += '<span class="q-type">' + q.type.replace(/_/g, ' ') + '</span>';
+      if (isMulti) html += '<span class="q-type" style="color:var(--warning)">Select multiple</span>';
+      const bmIcon = bookmarked.has(q.id) ? '&#9733;' : '&#9734;';
+      html += '<button class="btn btn-sm" style="margin-left:auto" onclick="window._toggleBm('+q.id+')">'+bmIcon+'</button>';
+      html += '</div>';
+      html += '<div class="question-text">' + formatPrompt(q.prompt) + '</div>';
+
+      if (q.questionImages && q.questionImages.length) {
+        html += '<div class="question-images">';
+        q.questionImages.forEach(url => {
+          html += '<img src="'+esc(url)+'" alt="Question image" class="q-image" onclick="window.open(this.src)">';
+        });
+        html += '</div>';
+      }
+
+      if (q.type === 'yes_no_statements') {
+        html += renderYesNo(q, ans, showResult);
+      } else if (q.type === 'drag-drop') {
+        html += '<div class="drag-drop-notice" style="padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:16px;color:var(--muted);font-style:italic;">This is a drag-and-drop / hot area question. Review the image above and check the explanation for the correct answer.</div>';
+      } else if (q.options && q.options.length) {
+        html += '<div class="options-list">';
+        q.options.forEach(opt => {
+          let cls = 'option-item';
+          const selected = ans && ans.selected && ans.selected.includes(opt.key);
+          const isCorrectOpt = q.answer.includes(opt.key);
+          if (showResult) {
+            if (selected && isCorrectOpt) cls += ' correct';
+            else if (selected && !isCorrectOpt) cls += ' incorrect';
+            else if (!selected && isCorrectOpt) cls += ' missed';
+          } else if (selected) cls += ' selected';
+          html += '<div class="'+cls+'" onclick="window._selOpt('+q.id+',\''+opt.key+'\','+isMulti+')">';
+          html += '<span class="option-key">'+opt.key+'</span>';
+          html += '<span class="option-text">'+esc(opt.text)+'</span></div>';
+        });
+        html += '</div>';
+      }
+
+      if (!checked && mode !== 'review') {
+        const btnLabel = q.type === 'drag-drop' ? 'Show Answer' : 'Check Answer';
+        html += '<button class="btn btn-primary" onclick="window._check('+q.id+')">'+btnLabel+'</button>';
+      }
+
+      if (showResult && q.explanation) {
+        html += '<div class="explanation show">';
+        html += '<div class="explanation-title">Explanation</div>';
+        html += '<div class="explanation-text">' + formatPrompt(q.explanation) + '</div>';
+        if (q.explanationImages && q.explanationImages.length) {
+          html += '<div class="question-images">';
+          q.explanationImages.forEach(url => {
+            html += '<img src="'+esc(url)+'" alt="Explanation image" class="q-image" onclick="window.open(this.src)">';
+          });
+          html += '</div>';
+        }
+        html += '<div class="answer-badge">Correct Answer: ' + q.answer.join(', ') + '</div>';
+        html += '</div>';
+      }
+
+      html += '</div>';
+      document.getElementById('questionArea').innerHTML = html;
+      document.getElementById('pageInfo').textContent = (current+1) + ' / ' + filtered.length;
+    }
+
+    function renderYesNo(q, ans, showResult) {
+      let html = '<div class="options-list">';
+      q.answer.forEach((correctVal, i) => {
+        const userVal = ans && ans.selected ? ans.selected[i] : null;
+        html += '<div class="yn-row"><span class="yn-label">' + (i+1) + '.</span>';
+        ['Yes','No'].forEach(v => {
+          let cls = 'option-item yn-btn';
+          if (showResult) {
+            if (userVal === v && v === correctVal) cls += ' correct';
+            else if (userVal === v && v !== correctVal) cls += ' incorrect';
+            else if (!userVal && v === correctVal) cls += ' missed';
+          } else if (userVal === v) cls += ' selected';
+          html += '<div class="'+cls+'" onclick="window._selYN('+q.id+','+i+',\''+v+'\')">';
+          html += '<span class="option-key" style="min-width:28px;height:28px;font-size:11px">'+v[0]+'</span>';
+          html += '<span class="option-text">'+v+'</span></div>';
+        });
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function selectOption(qId, key, isMulti) {
+      const q = questions.find(x => x.id === qId);
+      if (!q) return;
+      if (answers[qId] && answers[qId].checked && mode === 'practice') return;
+      if (mode === 'review') return;
+      if (!answers[qId]) answers[qId] = { selected: [], correct: false, checked: false };
+      if (isMulti) {
+        const idx = answers[qId].selected.indexOf(key);
+        if (idx > -1) answers[qId].selected.splice(idx, 1);
+        else answers[qId].selected.push(key);
+      } else {
+        answers[qId].selected = [key];
+      }
+      renderQuestion();
+    }
+
+    function selectYesNo(qId, idx, val) {
+      if (answers[qId] && answers[qId].checked && mode === 'practice') return;
+      if (mode === 'review') return;
+      if (!answers[qId]) answers[qId] = { selected: [], correct: false, checked: false };
+      if (!answers[qId].selected) answers[qId].selected = [];
+      answers[qId].selected[idx] = val;
+      renderQuestion();
+    }
+
+    function checkAnswer(qId) {
+      const q = questions.find(x => x.id === qId);
+      if (!q) return;
+
+      // For drag-drop questions, just mark as checked to show explanation
+      if (q.type === 'drag-drop') {
+        if (!answers[qId]) answers[qId] = { selected: [] };
+        answers[qId].checked = true;
+        answers[qId].correct = null; // not scored
+        saveState();
+        render();
+        return;
+      }
+
+      if (!answers[qId]) return;
+      const sel = answers[qId].selected;
+      if (!sel || !sel.length) return;
+
+      let correct = false;
+      if (q.type === 'yes_no_statements') {
+        correct = q.answer.every((a, i) => sel[i] === a);
+      } else {
+        const s = [...sel].sort();
+        const a = [...q.answer].sort();
+        correct = s.length === a.length && s.every((v, i) => v === a[i]);
+      }
+      answers[qId].correct = correct;
+      answers[qId].checked = true;
+      saveState();
+      render();
+
+      // Auto-advance in exam mode
+      if (mode === 'exam' && current < filtered.length - 1) {
+        setTimeout(() => { current++; render(); }, 600);
+      }
+    }
+
+    function goTo(i) { current = i; render(); }
+    function nextQ() { if (current < filtered.length - 1) { current++; render(); } }
+    function prevQ() { if (current > 0) { current--; render(); } }
+
+    function toggleBookmark(qId) {
+      if (bookmarked.has(qId)) bookmarked.delete(qId); else bookmarked.add(qId);
+      localStorage.setItem('ai103_bookmarks', JSON.stringify([...bookmarked]));
+      renderQuestion();
+    }
+
+    function updateStats() {
+      const checked = Object.values(answers).filter(a => a.checked);
+      const scored = checked.filter(a => a.correct !== null);
+      const correctCount = scored.filter(a => a.correct).length;
+      const wrongCount = scored.filter(a => !a.correct).length;
+      const score = scored.length ? Math.round(correctCount / scored.length * 100) : 0;
+      document.getElementById('correctQ').textContent = correctCount;
+      document.getElementById('wrongQ').textContent = wrongCount;
+      document.getElementById('scoreQ').textContent = score + '%';
+      const answeredInFilter = filtered.filter(q => answers[q.id] && answers[q.id].checked).length;
+      document.getElementById('remainQ').textContent = filtered.length - answeredInFilter;
+    }
+
+    function updateProgress() {
+      const total = questions.length;
+      const answered = Object.values(answers).filter(a => a.checked).length;
+      const pct = total ? Math.round(answered / total * 100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = answered + ' / ' + total + ' answered';
+      document.getElementById('progressPct').textContent = pct + '%';
+    }
+
+    function saveState() { localStorage.setItem('ai103_answers', JSON.stringify(answers)); }
+
+    function shuffle() {
+      for (let i = filtered.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+      }
+      current = 0; render();
+    }
+
+    function resetAll() {
+      if (!confirm('Reset all progress? This cannot be undone.')) return;
+      answers = {}; bookmarked = new Set();
+      localStorage.removeItem('ai103_answers');
+      localStorage.removeItem('ai103_bookmarks');
+      applyFilters();
+    }
+
+    function showResults() {
+      const checked = Object.values(answers).filter(a => a.checked);
+      const correct = checked.filter(a => a.correct).length;
+      const pct = checked.length ? Math.round(correct / checked.length * 100) : 0;
+      document.getElementById('finalScore').textContent = pct + '%';
+      document.getElementById('finalScore').className = 'score-big ' + (pct >= 70 ? 'pass' : 'fail');
+      document.getElementById('fCorrect').textContent = correct;
+      document.getElementById('fWrong').textContent = checked.length - correct;
+      document.getElementById('passMsg').textContent = pct >= 70 ? 'Congratulations! You passed! (70% required)' : 'Keep studying! You need 70% to pass.';
+      document.getElementById('resultsModal').classList.add('show');
+    }
+
+    function setMode(m) {
+      mode = m;
+      document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === m));
+      renderQuestion();
+    }
+
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        seconds++;
+        const h = String(Math.floor(seconds/3600)).padStart(2,'0');
+        const m = String(Math.floor((seconds%3600)/60)).padStart(2,'0');
+        const s = String(seconds%60).padStart(2,'0');
+        document.getElementById('timer').textContent = h+':'+m+':'+s;
+      }, 1000);
+    }
+
+    function toggleTheme() {
+      const cur = document.documentElement.dataset.theme;
+      document.documentElement.dataset.theme = cur === 'light' ? '' : 'light';
+      localStorage.setItem('ai103_theme', document.documentElement.dataset.theme);
+    }
+
+    function esc(s) { if (!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function formatPrompt(s) { if (!s) return ''; return esc(s).replace(/\n/g, '<br>'); }
+
+    // Expose to onclick handlers
+    window._goTo = goTo;
+    window._selOpt = selectOption;
+    window._selYN = selectYesNo;
+    window._check = checkAnswer;
+    window._toggleBm = toggleBookmark;
+
+    // Event listeners
+    document.getElementById('prevBtn').addEventListener('click', prevQ);
+    document.getElementById('nextBtn').addEventListener('click', nextQ);
+    document.getElementById('shuffleBtn').addEventListener('click', shuffle);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+    document.getElementById('resultsBtn').addEventListener('click', showResults);
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    document.getElementById('topicFilter').addEventListener('change', applyFilters);
+    document.getElementById('typeFilter').addEventListener('change', applyFilters);
+    document.getElementById('statusFilter').addEventListener('change', applyFilters);
+    document.querySelectorAll('.mode-tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+      if (e.key === 'ArrowRight' || e.key === 'n') nextQ();
+      else if (e.key === 'ArrowLeft' || e.key === 'p') prevQ();
+      else if (e.key === 'Enter') { const q = filtered[current]; if (q && answers[q.id] && !answers[q.id].checked) checkAnswer(q.id); }
+      else if (e.key >= '1' && e.key <= '6') {
+        const keys = ['A','B','C','D','E','F'];
+        const q = filtered[current];
+        if (q && q.options && q.options[parseInt(e.key)-1]) selectOption(q.id, keys[parseInt(e.key)-1], q.type === 'multi_select');
+      }
+    });
+
+    // Load theme
+    const savedTheme = localStorage.getItem('ai103_theme');
+    if (savedTheme) document.documentElement.dataset.theme = savedTheme;
+
+    init();
+  })();
+  </script>
+</body>
+</html>

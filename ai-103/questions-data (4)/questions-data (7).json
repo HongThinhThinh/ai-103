@@ -1,0 +1,119 @@
+[
+  {
+    "label": "質問 1",
+    "question": "You have a Microsoft Foundry project that contains a customer support agent built by using the Foundry Agent Service.\nThe agent uploads user-provided screenshots to Azure Storage through a ticketing tool and receives a blob URL for additional reasoning.\nYou need to use image moderation during agent runs and prevent harmful content from being returned during runs. Azure Al Content Safety must access the images by using the blob URL. The solution must follow the principle of least privilege.\nWhat should you configure for Content Safety? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_77_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:Guardrails: Select User input, Output, Tool response, and Tool call and set Action to Block.Storage access: A system-assigned managed identity that is assigned the Storage Blob Data Contributor role The guardrail must be applied to User input, Output, Tool response, and Tool call with the action set to Block . Microsoft Foundry guardrails support four intervention points: user input, tool call, tool response, and output. This scenario includes user-provided screenshots, a ticketing tool that uploads images and returns blob URLs, and final agent responses. Applying blocking controls at all four points ensures harmful image-related content is inspected throughout the agent run and prevented from continuing or being returned to the user.Microsoft's guardrails guidance also states that tool call and tool response controls are specifically required when harmful content can pass through agent tools.For storage, configure the Azure AI Content Safety resource with a system-assigned managed identity and grant it Storage Blob Data Contributor on the storage account or container. The Content Safety image moderation quickstart states that images can be supplied by blob storage URL and that the Content Safety resource must be given storage access by enabling its system-assigned managed identity and assigning Storage Blob Data Contributor or Owner; Contributor is the least-privileged valid option shown. Reference topics: Foundry guardrails, agent intervention points, image moderation, managed identity, and Azure Storage RBAC.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_79_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 2",
+    "question": "You have a Microsoft Foundry project that contains a customer support agent. The agent calls an internal knowledge API tool before generating responses.\nUsers report the following issues:\n* Some requests take more than 15 seconds to complete.\n* Some responses are incorrect, even when the knowledge API returns the expected data.\nYou need to inspect individual agent runs to view the ordered sequence of large language model (LLM) calls, tool invocations, and timing information.\nWhich observability capability should you use?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）token usage"
+      },
+      {
+        "key": "B",
+        "text": "（B）safety metrics"
+      },
+      {
+        "key": "C",
+        "text": "（C）tracing"
+      },
+      {
+        "key": "D",
+        "text": "（D）monitoring"
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "The correct capability is tracing because the requirement is to inspect the execution path of an individual agent run. Microsoft Foundry tracing captures detailed telemetry for agent behavior, including LLM calls, tool invocations, agent decision flows, inputs, outputs, tool results, token consumption, duration, and latency.This is the appropriate observability mechanism when you need to determine which step introduced a delay, whether the agent called the internal knowledge API, what data the tool returned, and how the model used that data before producing the final response. Microsoft's Foundry observability guidance describes distributed tracing as the mechanism that provides visibility into LLM calls, tool invocations, agent decisions, and inter-service dependencies.Token usage is useful for cost analysis and prompt optimization, but it does not show ordered run steps or tool-call sequencing. Safety metrics evaluate risk-related output behavior, not latency or tool execution.General monitoring provides aggregate health, latency, success-rate, and dashboard views, but the question asks for per-run sequence inspection and timing breakdowns. Foundry agent tracing specifically supports debugging unexpected behavior and monitoring latency across requests. Reference topics: Microsoft Foundry observability, agent tracing, OpenTelemetry-based traces, tool invocations, LLM call inspection, and latency diagnostics.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 3",
+    "question": "You are planning a Microsoft Foundry project named Project1 that will contain multiple agents. Each agent will access the same Azure Al Search resource.\nYou need to recommend a solution to centrally manage the Azure Al Search credentials within Project1. The solution must be implemented across all the agents.\nWhat should you recommend?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Enable role-based access control (RBAC) for the Azure Al Search resource."
+      },
+      {
+        "key": "B",
+        "text": "（B）Add a connection to the Azure Al Search resource."
+      },
+      {
+        "key": "C",
+        "text": "（C）Disable key-based access control on the Azure Al Search resource."
+      },
+      {
+        "key": "D",
+        "text": "（D）Create a managed private endpoint that connects to the Azure Al Search resource."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The correct recommendation is B. Add a connection to the Azure AI Search resource . Microsoft Foundry project connections are used to centrally define access from a project to external resources, including Azure AI Search. The official connection guidance states that you can add a connection by selecting an external service such as Azure AI Search , choosing the resource, and selecting the authentication method for that resource. This creates a reusable project-level configuration rather than requiring each agent to store or duplicate search credentials independently.For Foundry agents that use Azure AI Search, the Azure AI Search tool requires a project_connection_id, which is the resource ID of the project connection to Azure AI Search. This allows multiple agents to reference the same managed connection while using the configured endpoint and authentication settings consistently. RBAC may be part of a keyless authentication design, but it does not by itself create a centrally managed Foundry credential configuration. Disabling key-based access improves security posture but does not connect the agents. A managed private endpoint addresses network isolation, not credential centralization.Reference topics: Microsoft Foundry project connections, Azure AI Search tool, project connection IDs, authentication, and agent grounding.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 4",
+    "question": "You need to configure Agent1 to answer customer questions about only the Contoso products. The solution must meet the business requirements.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Apply top-p sampling."
+      },
+      {
+        "key": "B",
+        "text": "（B）Modify the system message instructions."
+      },
+      {
+        "key": "C",
+        "text": "（C）Add few-shot examples."
+      },
+      {
+        "key": "D",
+        "text": "（D）Increase the value of the temperature parameter."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The correct answer is B. Modify the system message instructions . The case study states that Agent1 answers general questions about Contoso products and that the business requirement is for Agent1 to answer questions only about the products sold by Contoso . This is a behavioral boundary for the agent, so it should be implemented in the highest-priority instructions that define the agent's role, allowed scope, and refusal behavior.Microsoft Foundry guidance states that a system message is used to steer model behavior, define the assistant' s role and boundaries, and add safety or quality constraints for the scenario. The system message should instruct Agent1 to answer only when the question concerns Contoso products, use the configured Contoso product documentation as grounding, and politely refuse or redirect questions about non-Contoso products.Top-p sampling and temperature control randomness, not business-domain scope. Increasing temperature would make responses less deterministic. Few-shot examples can support desired behavior, but examples alone are weaker than explicit system-level instructions for defining operating boundaries. Reference topics:system message design, prompt engineering, agent instructions, response constraints, and grounded generative AI behavior.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 5",
+    "question": "You are creating an agent workflow in a Microsoft Foundry project to support natural voice interactions.\nThe agent must receive continuous audio input, convert the input into text for reasoning, and then return spoken responses to a user. The workflow must meet the following requirements:\n. Support turn-taking dynamics, where the agent begins to generate the speech output before the user finishes speaking.\n. Operate with low latency to maintain a conversational experience.\nYou need to enable both speech to text and text to speech in a real-time agent interaction.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Use an embeddings model to encode the audio, and then decode the audio into text and speech."
+      },
+      {
+        "key": "B",
+        "text": "（B）Use batch transcription to convert the audio input and return text responses from the agent."
+      },
+      {
+        "key": "C",
+        "text": "（C）Use speech translation to convert the audio into another language and return the translated text."
+      },
+      {
+        "key": "D",
+        "text": "（D）Use real-time speech to text for incoming audio and text to speech for agent responses."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": "The correct answer is D. Use real-time speech to text for incoming audio and text to speech for agent responses . The workflow requires continuous audio input, low-latency transcription for reasoning, and spoken output back to the user. Azure Speech in Foundry Tools real-time speech to text is designed for immediate transcription from streaming audio, which satisfies the incoming-audio side of the interaction. Text to speech provides the outbound spoken response path after the agent generates its answer.This pattern aligns with Microsoft's real-time voice-agent architecture. The Voice Live API overview explains that low-latency speech-to-speech systems integrate speech recognition, generative reasoning, and text-to-speech functionality to create natural voice experiences. It also identifies contact centers as a key scenario and highlights low perceived latency for end users. Embeddings do not decode audio into conversational speech. Batch transcription introduces file-oriented delay and is not suitable for turn-taking.Speech translation is only appropriate when translating between languages and does not provide the required reasoning-plus-spoken-response loop. Reference topics: Azure Speech in Foundry Tools, real-time speech to text, text to speech, voice agents, low-latency interaction, and conversational turn-taking.",
+    "explanationImages": []
+  }
+]

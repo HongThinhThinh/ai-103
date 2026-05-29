@@ -1,0 +1,98 @@
+[
+  {
+    "label": "質問 11",
+    "question": "You have a Microsoft Foundry project that contains a deployed chat model.\nYou have a Python service that sends API requests to the model. The service is integrated with an automated validation system that compares generated outputs against approved response patterns.\nStakeholders report that small wording differences are causing validation mismatches.\nYou need to update the request parameters to improve output stability. The solution must maximize reasoning quality.\nHow should you complete the Python code? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_107_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:temperature = 0output_config = { \" effort \" : \" high \" }The correct configuration is temperature = 0 and output_config = { \" effort \" : \" high \" }. The requirement is to reduce small wording variations that are breaking automated validation. In chat completion requests, temperature controls sampling randomness. Microsoft's Azure OpenAI reference states that temperature ranges between 0 and 2, and that higher values make output more random while lower values make output more focused and deterministic. Therefore, the most stable setting from the available choices is 0, because it minimizes randomness and improves repeatability for validation-sensitive response patterns.The solution must also maximize reasoning quality. The code already enables thinking with thinking={ \" type\" : \" enabled \" }, so the remaining reasoning-quality control is the effort setting. Microsoft Foundry model guidance states that the effort parameter controls the quality/cost tradeoff and supports low, medium, and high effort levels. Selecting \" high \" maximizes reasoning quality among the available options.Using temperature values of 1 or 2 would increase variability and make validation mismatches more likely.Selecting low or medium effort would not meet the requirement to maximize reasoning quality. Reference topics: Microsoft Foundry model inference, chat model parameters, temperature, thinking, effort, and output stability.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_109_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 12",
+    "question": "You have a Microsoft Foundry project named Project1.\nProject1 contains an application that processes PDF vendor invoices.\nYou need to configure Azure Document Intelligence in Foundry Tools to generate a Markdown output that preserves the sections and table structure of the PDFs. The solution must minimize development effort.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Increase the confidence threshold."
+      },
+      {
+        "key": "B",
+        "text": "（B）Configure output=figures when you analyze the PDF."
+      },
+      {
+        "key": "C",
+        "text": "（C）Configure content=markdown when you analyze the document."
+      },
+      {
+        "key": "D",
+        "text": "（D）Set the output_content_format=ContentFormat. MARKDOWN value."
+      }
+    ],
+    "correctAnswer": "D",
+    "explanation": "The correct answer is D. Set the output_content_format=ContentFormat.MARKDOWN value . Azure Document Intelligence Layout API can return extracted document content in Markdown format, preserving semantic structure such as headings, paragraphs, sections, tables, and other layout elements. Microsoft's Document Intelligence layout guidance shows the Python SDK pattern for analyzing a document with the prebuilt-layout model and setting output_content_format=ContentFormat.MARKDOWN in the begin_analyze_document call. The Markdown output is returned in the top-level content section of the analysis result.This minimizes development effort because the service produces structure-preserving Markdown directly, rather than requiring custom post-processing to reconstruct sections and table formatting from raw OCR spans. Microsoft's Markdown output documentation states that specifying Markdown output produces semantically structured content that maintains paragraphs, headings, tables, and other document elements in their proper hierarchy.Option A only changes validation behavior and does not generate Markdown. Option B requests figures, not structured Markdown. Option C uses an incorrect parameter name; the documented SDK setting is output_content_format, not content. Reference topics: Azure Document Intelligence Layout API, Markdown output, PDF analysis, table extraction, and Foundry Tools document processing.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 13",
+    "question": "You have a Microsoft Foundry project that ingests scanned PDF invoices stored in Azure Blob Storage. Each invoice contains printed line items and has a table-based layout.\nExtracted results are stored as structured JSON and used as grounding data for an agent in a Retrieval Augmented Generation (RAG) solution.\nYou need to create a single analyzer that meets the following requirements:\n* Extracts the invoice number, invoice date, vendor name, and total amount across varying templates\n* Returns confidence scores so that results with confidence below 0.80 can be routed for supervisor review What should you use?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）the Azure Content Understanding in Foundry Tools prebuilt-layout analyzer"
+      },
+      {
+        "key": "B",
+        "text": "（B）a Foundry agent that has groundedness guardrails enabled to extract invoice fields and confidence scores"
+      },
+      {
+        "key": "C",
+        "text": "（C）a custom Azure Content Understanding in Foundry Tools analyzer that defines the required fields as the extracted fields and the returned confidence scores for routing"
+      },
+      {
+        "key": "D",
+        "text": "（D）the Azure Content Understanding in Foundry Tools prebuilt-documentSearch analyzer and search.score from the Azure AI Search results for routing"
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "The correct answer is C because the requirement is structured field extraction from invoices across varying templates, not only OCR or layout preservation. Azure Content Understanding analyzers are reusable configurations that combine content extraction, AI-powered analysis, and structured data output, and Microsoft states that custom analyzers can be created for specific extraction needs. In this case, the analyzer schema should define fields such as invoice number, invoice date, vendor name, and total amount so the output can be returned as structured JSON for downstream RAG grounding.The confidence-routing requirement also points to Content Understanding field confidence scores. Microsoft documentation states that every field can include a confidence score from 0 to 1, and that confidence scores can be used to automate high-confidence results while routing low-confidence results for human review. A threshold such as 0.80 is therefore an application routing rule based on the returned field confidence. The prebuilt-layout analyzer preserves layout but does not define invoice-specific business fields. Groundedness guardrails evaluate generated answers, not invoice field extraction. Azure AI Search search.score measures retrieval relevance, not extraction confidence. Reference topics: Content Understanding custom analyzers, document field extraction, structured JSON output, confidence scoring, and RAG grounding.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 14",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nThe agent uses tools to retrieve internal content and call external APIs. The agent is configured to let the model decide when to call the tools.\nYou need to publish the agent for a compliance workflow. The solution must meet the following requirements:\n* Each workflow run must include a retrieval step before generating a response.\n* Tool calls must authenticate by using the published agent's own identity.\n* Tool access must use an identity isolated from other project resources.\n* Tool access must support audit tracing.\nWhat should you do? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_51_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:Set tool_choice to: requiredConfigure the tool to authenticate by: Using a distinct agent identity bound to the client application Set tool_choice to required because the compliance workflow must deterministically include a tool-based retrieval step before the agent generates a response. Microsoft Foundry Agent Service guidance states that tool_choice provides the most deterministic control over tool use: auto lets the model decide, none prevents tool calls, and required forces the model to call one or more tools. This directly corrects the current nondeterministic behavior where the model decides whether to call tools.For authentication, use a distinct agent identity bound to the client application . Microsoft Foundry creates a shared identity for unpublished or in-development agents, but publishing an agent automatically creates a dedicated agent identity blueprint and agent identity associated with the agent application resource. Published agents authenticate tool calls by using that unique agent identity, and RBAC permissions must be assigned to the new identity. This provides isolation from the broader shared project identity and supports independent audit trails for compliance workflows.Storing API keys in prompts violates security guidance and prevents robust audit attribution. The shared project agent identity is easier for development, but it has a broader blast radius and does not meet the isolation requirement. Reference topics: Foundry Agent Service tool choice, tool authentication, published agent identities, RBAC, and auditability.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_52_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 15",
+    "question": "Note: This section contains one or more sets of questions with the same scenario and problem. Each question presents a unique solution to the problem. You must determine whether the solution meets the stated goals. More than one solution in the set might solve the problem. It is also possible that none of the solutions in the set solve the problem.\nAfter you answer a question in this section, you will NOT be able to return. As a result, these questions do not appear on the Review Screen.\nYou have a Microsoft Foundry project that contains an agent. The agent generates summaries from retrieved policy documents.\nUsers report that some responses omit required regulatory clauses, even when the clauses are present in the retrieved content.\nYou need to improve response completeness.\nSolution: You add a reflection pass that regenerates the response if the required clauses are missing.\nDoes this meet the goal?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Yes"
+      },
+      {
+        "key": "B",
+        "text": "（B）No"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "Yes, the solution meets the goal. The problem is not retrieval availability, because the required regulatory clauses are already present in the retrieved policy documents. The failure occurs during generation: the agent produces a summary that omits required content. A reflection pass is the correct application-level control because it adds a verification step before the response is returned. The pass can compare the draft answer against the retrieved clauses, detect missing mandatory content, and trigger regeneration or revision until the summary includes the required clauses.This aligns with Microsoft Foundry's evaluation and observability model, where generated responses are assessed for reliability, groundedness, relevance, and quality throughout the AI application lifecycle. Foundry observability guidance describes evaluation as a mechanism for measuring response quality and improving AI outputs across development and production workflows. The Azure AI evaluation SDK also defines completeness as the extent to which a generated response contains all necessary and relevant information with respect to the provided ground truth. Reflection operationalizes that quality check inside the application flow, rather than merely reporting the defect after the fact. Reference topics: model reflection, response completeness, RAG generation quality, retrieved context verification, and agent response optimization.",
+    "explanationImages": []
+  }
+]

@@ -1,0 +1,90 @@
+[
+  {
+    "label": "質問 21",
+    "question": "You have a Microsoft Foundry project that contains an agent. The agent generates summaries from retrieved policy documents.\nYou need to improve response completeness. The solution must be implemented in the logic of the application code before responses are returned.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Decrease the value of the temperature parameter."
+      },
+      {
+        "key": "B",
+        "text": "（B）Add a reflection pass before the responses are returned."
+      },
+      {
+        "key": "C",
+        "text": "（C）Switch to Retrieval Augmented Generation (RAG)."
+      },
+      {
+        "key": "D",
+        "text": "（D）Enable response streaming."
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The correct answer is B. Add a reflection pass before the responses are returned . A reflection pass is an application-orchestration step in which the generated summary is reviewed before final delivery, typically by asking the model or an evaluator step to check whether the answer covers the retrieved policy evidence and to revise the response when important details are missing. This directly addresses response completeness in application logic before the response is returned. The Microsoft Learn study guide explicitly includes Implement model reflection and Apply prompt engineering techniques to improve responses under optimization and operationalization of generative AI solutions.This is also consistent with Microsoft Foundry agentic-loop guidance, which identifies reflection and planning cycles as patterns for multi-step reasoning in production agent systems. Completeness is a response-quality property: Azure AI evaluation defines completeness as whether a response contains all necessary and relevant information with respect to ground truth.Option C is not correct because the scenario already says the agent generates summaries from retrieved policy documents, which is already a grounded retrieval pattern. Option A mainly reduces randomness, not missing content. Option D improves delivery experience, not answer completeness. Reference topics: model reflection, prompt engineering, agentic loops, response evaluation, and grounded generative AI solutions.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 22",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nThe agent accepts user-uploaded screenshots and uses a multimodal chat model.\nSome screenshots contain potentially malicious embedded text.\nYou need to prevent a prompt injection attack and ensure that third-party content is treated as lower trust.\nHow should you configure prompt shields for document attacks? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_91_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:Prompt shields action: Set action to block.Additional mitigation: Enable Spotlighting.The correct configuration is to set the Prompt Shields document attack action to block and enable Spotlighting . Prompt Shields in Microsoft Foundry are designed to detect attempts to manipulate model behavior through adversarial input. Microsoft distinguishes document attacks from direct user prompt attacks:document attacks are malicious instructions embedded in third-party content such as documents, webpages, emails, or other externally supplied material. In this scenario, the embedded text inside uploaded screenshots is third-party content and can attempt to override the agent's instructions. Setting the action to block prevents detected document-attack content from being processed normally, which is required because the goal is prevention rather than passive logging or annotation.Spotlighting is the additional mitigation because it marks or transforms document content so the model treats it as lower trust than system and user instructions. Microsoft's Foundry guidance describes Spotlighting as a Prompt Shields subfeature that helps protect against indirect or embedded document attacks by tagging input documents with special formatting to indicate lower trust. A custom blocklist is insufficient for unknown attacks, and OCR alone only extracts the malicious text; it does not mitigate prompt injection. Reference topics: Prompt Shields, document attacks, guardrails, Spotlighting, multimodal safety, and prompt injection defense.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_93_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 23",
+    "question": "Note: This section contains one or more sets of questions with the same scenario and problem. Each question presents a unique solution to the problem. You must determine whether the solution meets the stated goals. More than one solution in the set might solve the problem. It is also possible that none of the solutions in the set solve the problem.\nAfter you answer a question in this section, you will NOT be able to return. As a result, these questions do not appear on the Review Screen.\nYou have a Microsoft Foundry project that contains an agent. The agent generates summaries from retrieved policy documents.\nUsers report that some responses omit required regulatory clauses, even when the clauses are present in the retrieved content.\nYou need to improve response completeness.\nSolution: You run an evaluation flow that scores responses for completeness and blocks responses that fall below a defined threshold.\nDoes this meet the goal?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Yes"
+      },
+      {
+        "key": "B",
+        "text": "（B）No"
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The solution does not meet the goal. A completeness evaluation flow is useful for detecting incomplete responses, but detection and blocking do not improve the response itself. Microsoft Foundry RAG evaluators define Response Completeness as a metric that measures whether a response covers all critical information from the expected response or ground truth. It is a system evaluation signal used to assess response quality and produce pass/fail or scored results.In this scenario, the issue is that the agent omits required regulatory clauses even though the clauses are present in retrieved content. Blocking low-scoring responses would prevent incomplete answers from being returned, but it would not revise the summary, add the missing clauses, or improve the generation process.The appropriate improvement is to add a response-generation control such as a reflection or verification pass that checks the draft summary against the retrieved policy content and regenerates or amends the answer before returning it. Evaluation can support the quality gate, but by itself it is an assessment mechanism, not a completeness-enhancement mechanism. Reference topics: Microsoft Foundry RAG evaluators, response completeness, grounded generation, reflection, and response quality optimization.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 24",
+    "question": "You have a Microsoft Foundry project that processes procurement documents submitted by suppliers.\nYou need to implement two pipelines by using Azure Content Understanding in Foundry Tools. The solution must meet the following requirements:\n* Include a pipeline named Pipeline1 that supports cost-effective, high-volume processing of standalone PDF invoices.\n* Include a pipeline named Pipeline2 that supports cross-document validation by using multi-step reasoning and reference data.\nHow should you configure each pipeline? To answer, drag the appropriate configurations to the correct pipelines. Each configuration may be used once, more than once, or not at all. You may need to drag the split bar between panes or scroll to view content.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_47_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:Pipeline1: Single-file task in standard modePipeline2: Multi-file task in pro modePipeline1 should use a single-file task in standard mode because the workload is high-volume processing of standalone PDF invoices. Azure Content Understanding standard mode is intended for individual files that require straightforward structured extraction, and Microsoft describes it as minimizing cost and latency for broad, data-centric processing scenarios. This makes it the best fit for cost-effective invoice extraction where each PDF can be processed independently.Pipeline2 should use a multi-file task in pro mode because the requirement includes cross-document validation, multi-step reasoning, and reference data. Microsoft guidance states that pro mode is designed for advanced scenarios requiring multi-step reasoning and cross-file analysis, including processing multiple input files in a single request, validating or enriching data across documents, and using reference data to guide extraction and validation.Single-file pro mode would add unnecessary capability for Pipeline1 and would not optimize for cost- effective high-volume standalone processing. Multi-file standard mode does not meet the pro-mode requirement for reference-data-based reasoning. Reference topics: Azure Content Understanding standard mode, pro mode, single-file tasks, multi-file tasks, field extraction, and procurement document validation.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_48_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 25",
+    "question": "Note: This section contains one or more sets of questions with the same scenario and problem. Each question presents a unique solution to the problem. You must determine whether the solution meets the stated goals. More than one solution in the set might solve the problem. It is also possible that none of the solutions in the set solve the problem.\nAfter you answer a question in this section, you will NOT be able to return. As a result, these questions do not appear on the Review Screen.\nYou have a multimodal AI generative model that accepts image uploads and uses extracted image text to generate responses.\nYou discover that users can upload unsafe images and embed hidden instructions into images to manipulate the model.\nYou need to implement controls to mitigate the risk.\nSolution: You configure image moderation to block unsafe content before processing the images.\nDoes this meet the goal?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Yes"
+      },
+      {
+        "key": "B",
+        "text": "（B）No"
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The solution does not fully meet the goal. Image moderation is appropriate for one part of the risk: blocking unsafe image content before the image is processed. Azure AI Content Safety provides image APIs that detect harmful content, and its harm categories and severity levels can be used to classify and block objectionable image content. This addresses unsafe photos, but it does not address hidden instructions embedded in images.The second risk is prompt manipulation through extracted image text. After OCR extracts text from the uploaded image, that text becomes untrusted third-party content supplied to a generative model. Microsoft defines document attacks as malicious instructions embedded in third-party content, where the objective is to cause the model to execute unintended commands or alter intended behavior. Prompt Shields are the control designed to detect user prompt attacks and document attacks, including indirect attacks that come from uploaded or referenced content.Therefore, image moderation alone is incomplete. A complete mitigation would combine image moderation for harmful visual content with Prompt Shields for document attacks, and optionally Spotlighting, so extracted or embedded text is treated as lower trust. Reference topics: Azure AI Content Safety, image moderation, Prompt Shields, document attacks, indirect prompt injection, and multimodal safety.",
+    "explanationImages": []
+  }
+]

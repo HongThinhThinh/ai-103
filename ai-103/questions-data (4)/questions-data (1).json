@@ -1,0 +1,116 @@
+[
+  {
+    "label": "Question 31",
+    "question": "Note: This section contains one or more sets of questions with the same scenario and problem. Each question presents a unique solution to the problem. You must determine whether the solution meets the stated goals. More than one solution in the set might solve the problem. It is also possible that none of the solutions in the set solve the problem.\nAfter you answer a question in this section, you will NOT be able to return. As a result, these questions do not appear on the Review Screen.\nYou have a multimodal Al generative model that accepts image uploads and uses extracted image text to generate responses.\nYou discover that users can upload unsafe images and embed hidden instructions into images to manipulate the model.\nYou need to implement controls to mitigate the risk.\nSolution: You configure protected material detection.\nDoes this meet the goal?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Yes"
+      },
+      {
+        "key": "B",
+        "text": "（B）No"
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The solution does not meet the goal. Protected material detection is intended to identify large language model output that matches known protected text or code, such as copyrighted text, selected web content, song lyrics, articles, recipes, or code. Microsoft describes protected material detection as a control for preventing AI- generated content from reproducing known protected material, not as a control for image safety or prompt injection.The stated risk has two parts: users can upload unsafe images, and users can embed hidden instructions in images to manipulate the model. Unsafe image uploads require image moderation, because Azure AI Content Safety provides image APIs that detect harmful content across modalities and can support blocking decisions by harm category and severity. Hidden instructions extracted from images are indirect prompt injection or document attacks; Microsoft Prompt Shields are the capability designed to detect user prompt attacks and document attacks, including harmful instructions embedded in third-party content.Therefore, protected material detection alone does not mitigate either primary risk. Reference topics: Azure AI Content Safety, image moderation, Prompt Shields, document attacks, indirect prompt injection, and protected material detection.Topic 1, Case Study Contoso, LtdOverviewContoso, Ltd is a multinational retail company that builds, deploys, and manages generative Al and agent- based solutions by using Microsoft Foundry.Identity Environment:Contoso uses Microsoft Entra ID for identity management, authentication, and authorization capabilities that enable agents to access organizational resources and services.Contoso recently formed a new Al engineering team named Agent1Dev Team to optimize and maintain existing Al solutions.The team collaborates with solution architects, DevOps engineers, and security engineers to design, implement, monitor, and secure Al applications.Contoso also has a team named Agent1Test Team that is responsible for validating Al solutions before the solution deployments.Generative Environment:Contoso has a Microsoft Foundry deployment that contains two projects named Project1 and Project2.Project1Project1 contains a customer support agent named Agent1 that assists customers with product inquiries and troubleshooting requests.Agent1 has the following configurations:* Agent1 uses a base model deployment.* A safety evaluation pipeline is NOT enabled.* Tool invocation approval workflows are NOT enabled.* Conversation memory constraints are NOT configured.Agent1 interacts with customers by using digital support channels and answers general questions about Contoso products.Project1 is deployed to an Azure region located in the European Union (EU).Agent1Dev Team will use Project1 to optimize and maintain Agent1.Project2Project2 contains a deployed video generation model. The marketing department at Contoso has access to Project2 and plans to use the model to develop a video creation solution.Development of the solution is incomplete.Data Environment:Contoso stores product-related information in Azure resources that support Al applications.The Azure environment contains an Azure Blob Storage account named storage1 that stores product detail sheets for all the Contoso products.The product sheets include specifications, feature descriptions, and product support information that Agent1 can use to answer customer questions. The product sheets are stored in the PDF format.Problem Statement:Contoso identifies the following issues:* Agent1 has only general knowledge of the Contoso products.* A recent chat interaction with Agent1 was analyzed for sentiment. The results of the analysis have NOT been processed yet.* Agent1 does NOT use the detailed product information in the product sheets stored in storage1 when responding to customer questions.* The finance department at Contoso reports that vendor invoices must be reviewed manually to ensure that the invoices match the terms defined in the vendor contracts. The invoices contain tables, logos, and varied layouts that make the documents difficult to process consistently.Requirement:Planned Changes:Contoso plans to implement the following changes:* Implement a solution for Project1 that analyzes the vendor invoices by evaluating both the visual layout and the textual content of the invoices, so that the invoice details can be verified against the vendor contract terms.* Update the base model deployment used by Agent1 and standardize the model version to ensure continuity and consistent responses.* Enable Agent1 to retrieve and use the detailed product information from the product sheets stored in storage1.* Implement an indexing solution for the product sheets that Agent1 can use to answer customer questions.* Complete the development of the video creation solution.Technical Requirements:Contoso identifies the following technical requirements:* The model deployment used by Agent1 must support scalable, high-throughput generative Al workloads and dynamically scale to handle variable customer support traffic, without requiring reserved throughput capacity.* The product sheets must be processed by using an indexing pipeline that enables semantic and vector search, so that Agent1 can retrieve the relevant product information.* Responses generated by using the product sheet information must be relevant, complete, and accurate.* Agent1 must be able to use the product sheets to answer natural language questions about product details.* The model version used by Agent1 must remain consistent to ensure stable responses.* The data processed by the model must remain within the EU.Safety and Compliance Requirements:Contoso identifies the following security and compliance requirements:* API keys must NOT be used to access Foundry-deployed models.* Access to the Azure resources must follow the principle of least privilege.* The developers at Contoso must authenticate to Microsoft Foundry resources by using Microsoft Entra authentication.* Access to Project1 must be assigned to the members of Agent1Dev Team by using a security group named SC_Agent1_Dev.* Access to Project1 must be assigned to the members of Agent1Test Team by using a security group named SC_Agent1_Test.* Agent1 must never reveal customer information, even if a document that contains customer data is added erroneously to the product sheet repository in storage1.* The product sheets might contain images that include embedded text. Agent1 must be protected from malicious instructions potentially hidden within the images.Business Information:Contoso identifies the following business requirements:* Users that interact with Agent1 must have a personalized experience in future interactions, including the ability for Agent1 to retain conversation context and recall relevant information from previous interactions.* Agent1 must answer questions only about the products sold by Contoso.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 32",
+    "question": "You have a Microsoft Foundry project that uses Azure Al Search to ground an agent in internal documentation.\nAfter a recent content update, users report that the agent ' s answers have become less accurate.\nYou need to identify whether the retrieved content is negatively influencing the model ' s generated responses.\nWhich observability signal should you review?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）prediction drift metrics"
+      },
+      {
+        "key": "B",
+        "text": "（B）groundedness evaluation metrics"
+      },
+      {
+        "key": "C",
+        "text": "（C）latency breakdown traces"
+      },
+      {
+        "key": "D",
+        "text": "（D）indexer status and failure history"
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The correct observability signal is B. groundedness evaluation metrics . In a RAG solution, the key diagnostic question is whether the generated answer is supported by the retrieved context. Microsoft Foundry' s built-in evaluator reference defines Groundedness as the metric that measures how grounded the response is in the retrieved context, with scoring that indicates whether the model's claims are supported by the provided source material.This matches the issue after a content update. If retrieved chunks are stale, misleading, incomplete, or poorly aligned with the user query, groundedness results can show that generated responses are not reliably supported by the retrieved documentation. The RAG evaluator guidance explains that groundedness focuses on whether the response avoids content outside the grounding context, while other process metrics such as retrieval evaluate how relevant the retrieved chunks are. Latency traces are useful for performance troubleshooting, not response accuracy. Indexer status can reveal ingestion failures, but it does not show whether retrieved content is influencing generated answers negatively. Prediction drift is a model monitoring concept and is not the primary signal for RAG grounding quality. Reference topics: Microsoft Foundry observability, RAG evaluators, groundedness, retrieved context, and response quality evaluation.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 33",
+    "question": "You need to recommend a solution to support the planned changes and technical requirements for Agent1 to use the product information stored in storage1.\nWhat should you include in the recommendation?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Azure Al Search"
+      },
+      {
+        "key": "B",
+        "text": "（B）Grounding with Bing Search"
+      },
+      {
+        "key": "C",
+        "text": "（C）Azure Translator in Foundry Tools"
+      },
+      {
+        "key": "D",
+        "text": "（D）Azure Document Intelligence in Foundry Tools"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 34",
+    "question": "You are deploying a support agent that enables users to upload photos.\nYou need to automatically classify uploaded images for harmful content. The solution must block content based on severity levels.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Implement image moderation."
+      },
+      {
+        "key": "B",
+        "text": "（B）Enable prompt shields."
+      },
+      {
+        "key": "C",
+        "text": "（C）Apply keyword scanning to optical character recognition (OCR) output by using Azure Vision in Foundry Tools."
+      },
+      {
+        "key": "D",
+        "text": "（D）Use blocklists."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct answer is A. Implement image moderation . Azure AI Content Safety provides image analysis that classifies uploaded images for harmful content, including harm categories such as hate, sexual content, violence, and self-harm. Microsoft's Content Safety overview states that the Analyze Image API scans images for harmful content with multi-severity levels, which directly matches the requirement to automatically classify uploaded photos and block content based on configured severity thresholds.Prompt Shields are intended to detect prompt injection and jailbreak-style attacks against generative models, not to classify image harm categories. Keyword scanning OCR output would only detect visible text extracted from the image and would miss visual harm in the image itself. Blocklists can help match known words or custom patterns, but they are not a complete image safety classifier and do not provide the built-in severity- based image harm classification required here. Image moderation is therefore the correct control for user- uploaded photos. Reference topics: Azure AI Content Safety, image moderation, harm categories, severity levels, Foundry guardrails, and responsible AI controls.",
+    "explanationImages": []
+  },
+  {
+    "label": "Question 35",
+    "question": "Note: This section contains one or more sets of questions with the same scenario and problem. Each question presents a unique solution to the problem. You must determine whether the solution meets the stated goals. More than one solution in the set might solve the problem. It is also possible that none of the solutions in the set solve the problem.\nAfter you answer a question in this section, you will NOT be able to return. As a result, these questions do not appear on the Review Screen.\nYou have a Microsoft Foundry project that contains an agent. The agent generates summaries from retrieved policy documents.\nUsers report that some responses omit required regulatory clauses, even when the clauses are present in the retrieved content.\nYou need to improve response completeness.\nSolution: You increase the value of the temperature parameter.\nDoes this meet the goal?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Yes"
+      },
+      {
+        "key": "B",
+        "text": "（B）No"
+      }
+    ],
+    "correctAnswer": "B",
+    "explanation": "The solution does not meet the goal. Increasing temperature changes the sampling behavior of the generative model, not the completeness-checking logic of the application. Microsoft's Azure OpenAI reference defines temperature as a sampling control where higher values make output more random, while lower values make output more focused and deterministic. Raising the value can increase variation and creativity, but it does not ensure that all required regulatory clauses from the retrieved policy documents are included.The reported issue is a recall/completeness failure: relevant clauses are already present in retrieved content, but the generated summary omits them. Microsoft Foundry RAG evaluator guidance defines Response Completeness as whether a response covers critical information compared to expected information or ground truth, and distinguishes it from groundedness, which checks that responses do not go beyond grounding context.A more suitable implementation would add a reflection, verification, or completeness review pass that compares the draft summary against the retrieved clauses and revises the response before returning it.Increasing temperature could make outputs less predictable and may worsen omission risk. Reference topics:model parameters, temperature, RAG response completeness, retrieved context, and model reflection.",
+    "explanationImages": []
+  }
+]

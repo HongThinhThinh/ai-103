@@ -1,0 +1,106 @@
+[
+  {
+    "label": "質問 26",
+    "question": "You have a Microsoft Foundry project that contains three agents as shown in the following table.\nName\nDescription\nTriageAgent\nClassifies incoming customer requests\nPolicyAgent\nAnswers policy questions by searching internal content\nActionAgent\nCreates or updates tickets by calling an HTTP API\nYou need to orchestrate the agents to ensure that the customer requests meet the following requirements:\n* Support a deterministic, step-based process that uses conditional branching and shared state across the agents.\n* Optionally trigger a ticket action based on the triage result.\nThe solution must minimize development effort.\nWhat should you include in the solution?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）separate agent runs coordinated in the application code"
+      },
+      {
+        "key": "B",
+        "text": "（B）a multi-agent group chat session"
+      },
+      {
+        "key": "C",
+        "text": "（C）a workflow"
+      },
+      {
+        "key": "D",
+        "text": "（D）threads and runs without a workflow"
+      }
+    ],
+    "correctAnswer": "C",
+    "explanation": "The correct answer is a workflow . Microsoft Foundry workflows are designed to orchestrate agents and business logic as declarative, predefined sequences of actions. The official workflow guidance states that workflows are ideal when you need to orchestrate multiple agents in a repeatable process, add branching logic such as if/else, and handle variables without writing application orchestration code. This directly matches the requirement for a deterministic, step-based process with conditional branching and shared state.In this scenario, TriageAgent can classify the request first, the workflow can store the triage result, and conditional logic can determine whether to invoke PolicyAgent, ActionAgent, or both. The ticket action is optional, so it should be triggered through a workflow condition based on the triage output. This minimizes development effort because the branching, sequencing, and variable handling are managed in the Foundry workflow rather than being manually implemented across separate runs in application code.A group chat session is better for dynamic agent handoff, not a strict deterministic process. Threads and runs or separate app-coordinated calls require more custom orchestration. Reference topics: Microsoft Foundry workflows, multi-agent orchestration, conditional branching, variable handling, and agent-driven workflows.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 27",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nYou need to process mixed-format documents that contain scanned text, tables, and multicolumn layouts. The extracted content must preserve the document structure and be converted into the Markdown format for downstream reasoning.\nWhat should you configure first?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）an Azure Content Understanding in Foundry Tools analyzer"
+      },
+      {
+        "key": "B",
+        "text": "（B）a generative chat completion request"
+      },
+      {
+        "key": "C",
+        "text": "（C）an Azure Language in Foundry Tools text analysis model deployment"
+      },
+      {
+        "key": "D",
+        "text": "（D）an Azure OpenAl Responses API call that uses a multimodal model"
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct answer is A. an Azure Content Understanding in Foundry Tools analyzer . In Azure Content Understanding, an analyzer is the reusable configuration that defines what content type is processed, which elements are extracted, and how the output is structured. Microsoft's analyzer guidance states that analyzers define extraction for text, layout, tables, fields, and output formats such as Markdown and JSON. This makes the analyzer the first required configuration step before downstream reasoning or agent orchestration can use the extracted content.This matches the requirement because the documents contain scanned text, tables, and multicolumn layouts.Content Understanding document analysis is designed to transform unstructured documents into structured, machine-readable output while preserving document structures and relationships. Its Markdown representation converts unstructured documents into GitHub Flavored Markdown while maintaining content and layout for downstream use.A generative chat completion request or Azure OpenAI Responses API call could reason over extracted content, but it is not the correct first step for OCR, layout preservation, and Markdown conversion. Azure Language focuses on text analysis after content has already been extracted. Reference topics: Content Understanding analyzers, document extraction, OCR, layout analysis, Markdown output, and downstream reasoning.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 28",
+    "question": "You need to recommend a plan to create a customer support agent by using the Microsoft Foundry Agent Service. The agent must meet the following requirements:\n* Retain user preferences across multiple conversations.\n* Enable users to provide contextual grounding by directly uploading documents during a chat.\nWhich Foundry capability should you recommend for each requirement? To answer, select the appropriate options in the answer area.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_19_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:To retain user preferences across conversations, use: Agent memory that uses persistent storage To enable users to provide contextual grounding during chats, use the: file search tool The correct capability for retaining user preferences is agent memory that uses persistent storage .Microsoft Foundry Agent Service memory is a managed long-term memory capability that enables continuity across sessions, devices, and workflows. It is specifically intended to let agents retain user preferences, maintain relevant historical context, and personalize responses across separate conversations. Memory stores provide the persistent storage layer, and scope can be used to segment memories for secure user-specific experiences.The correct capability for contextual grounding from user-uploaded documents is the file search tool .Microsoft describes file search as the tool that enables Foundry agents to search through documents and retrieve relevant information from outside the base model, including proprietary product information and user- provided documents. The file search workflow supports uploading files, creating a vector store, enabling the tool on the agent, and querying those documents through the agent.Conversation history alone supports continuity within a conversation, but it is not durable preference memory across multiple conversations. An Azure AI Search tool is better for preconfigured enterprise indexes, while file search is the direct document-upload grounding capability. Reference topics: Foundry Agent Service memory, memory stores, File Search tool, vector stores, and grounded agent responses.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_20_c5f438a9da7fde48.jpg"
+    ]
+  },
+  {
+    "label": "質問 29",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nThe knowledge source for the agent is a set of scanned PDF troubleshooting guides stored in Azure Blob Storage. The guide pages contain two-column layouts and tables.\nYou use Azure Content Understanding in Foundry Tools to process the PDFs.\nYou plan to ingest the processed content into an index for Retrieval Augmented Generation (RAG) and store extracted fields for downstream automation.\nStakeholders must be able to verify where each extracted field value came from in the original PDF and route low-reliability extractions for manual review.\nYou need to ensure that the Content Understanding document analyzer output includes a per-field confidence score and source grounding locations within the source document.\nWhat should you do?",
+    "questionImages": [],
+    "options": [
+      {
+        "key": "A",
+        "text": "（A）Enable estimateFieldSourceAndConfidence."
+      },
+      {
+        "key": "B",
+        "text": "（B）Configure the analyzer to use generative extraction for all fields."
+      },
+      {
+        "key": "C",
+        "text": "（C）Set enableSegment to true."
+      },
+      {
+        "key": "D",
+        "text": "（D）Provide labeled samples."
+      }
+    ],
+    "correctAnswer": "A",
+    "explanation": "The correct answer is A. Enable estimateFieldSourceAndConfidence . Azure Content Understanding document analyzers support an opt-in confidence and grounding capability for field extraction. Microsoft documentation states that to opt in for confidence and grounding, you set estimateFieldSourceAndConfidence= true in the analyzer configuration, or configure estimateSourceAndConfidence = true for specific fields.This enables each extracted field to include a confidence score and references back to the original document source location.This directly satisfies both stakeholder requirements: source grounding allows users to verify where the extracted value came from in the scanned PDF, and the confidence score supports downstream automation rules, such as sending low-confidence fields to manual review. Microsoft's analyzer improvement guidance describes confidence scoring as a value between 0 and 1 and grounding as references or citations for extracted outputs to the original document content.Generative extraction does not guarantee per-field confidence and source grounding. enableSegment is used for document segmentation, not confidence scoring. Labeled samples can improve extraction quality, but they do not by themselves enable confidence and grounding output. Reference topics: Content Understanding document analyzers, field extraction, confidence scoring, grounding, and RAG ingestion.",
+    "explanationImages": []
+  },
+  {
+    "label": "質問 30",
+    "question": "You have a Microsoft Foundry project that contains an agent.\nYou need to enable long-term memory to ensure that the agent can recall user preferences across separate conversations. Stored memories must be isolated per authenticated user without the client application manually generating user IDs.\nHow should you complete the Python code? To answer, drag the appropriate values to the correct targets.\nEach value may be used once, more than once, or not at all.\nNOTE: Each correct selection is worth one point.",
+    "questionImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_112_c5f438a9da7fde48.jpg"
+    ],
+    "options": [],
+    "correctAnswer": "",
+    "explanation": "Explanation:scope = \" {{userId}} \"tools = [memory_tool]The correct scope value is {{userId}} because the requirement is per-authenticated-user memory isolation without the client application manually generating user identifiers. In Microsoft Foundry Agent Service memory, the scope parameter partitions memory items inside the memory store. The official guidance states that when the memory search tool is attached to an agent, setting scope to the user identity template enables per-user memory isolation; the service resolves the end-user identity from the request header when provided, or falls back to the Microsoft Entra tenant ID and object ID of the caller. This matches the requirement to isolate stored preferences by authenticated user automatically.The tools property must be [memory_tool] because the MemorySearchTool instance is created earlier and must be attached to the PromptAgentDefinition. Foundry guidance shows the memory search tool being passed in the agent definition as tools=[tool] , allowing the agent to read from and write to the configured memory store during conversations.\" session \" and {{conversationId}} would limit continuity to a session or conversation instead of enabling long-term recall across separate conversations. [mem_store_name] is a list containing the store name, not a tool definition. Reference topics: Foundry Agent Service memory, memory stores, memory search tools, scope, and per-user isolation.",
+    "explanationImages": [
+      "https://i0.wp.com/www.jpntest.com/uploads/imgs/AI-103%20V12.35/img_113_c5f438a9da7fde48.jpg"
+    ]
+  }
+]

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Azure AI Study Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef4ff;
+      --panel: #ffffff;
+      --ink: #172033;
+      --muted: #647086;
+      --blue: #2563eb;
+      --cyan: #0891b2;
+      --purple: #7c3aed;
+      --green: #059669;
+      --orange: #ea580c;
+      --line: #d9e2f1;
+      --shadow: 0 20px 60px rgba(22, 32, 51, 0.12);
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #08111f;
+      --panel: #101b2e;
+      --ink: #e8eefc;
+      --muted: #aab7cf;
+      --blue: #60a5fa;
+      --cyan: #22d3ee;
+      --purple: #a78bfa;
+      --green: #34d399;
+      --orange: #fb923c;
+      --line: #26364f;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.34);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Segoe UI, Arial, sans-serif;
+      background: radial-gradient(circle at top left, #dbeafe 0, transparent 34%), var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    [data-theme="dark"] body {
+      background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.26) 0, transparent 34%), var(--bg);
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 24px;
+    }
+
+    .hero-card,
+    .stat-card,
+    .section,
+    .mini-card {
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero-card {
+      padding: 36px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      right: -70px;
+      top: -70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(124, 58, 237, 0.18));
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    [data-theme="dark"] .eyebrow {
+      background: rgba(96, 165, 250, 0.18);
+      color: #bfdbfe;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .control-btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      padding: 10px 14px;
+      box-shadow: 0 8px 22px rgba(22, 32, 51, 0.08);
+    }
+
+    a.control-btn {
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .control-btn:hover {
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.15;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin-top: 20px;
+      font-size: clamp(34px, 6vw, 68px);
+      letter-spacing: -0.055em;
+    }
+
+    .hero-card p {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 18px;
+      margin: 20px 0 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .stat-card {
+      padding: 24px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 34px;
+      color: var(--blue);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-card span {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 8px 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--bg) 82%, transparent));
+    }
+
+    .nav a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--ink);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(22, 32, 51, 0.06);
+    }
+
+    .section {
+      padding: 28px;
+      margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 20px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      max-width: 680px;
+      margin: 8px 0 0;
+    }
+
+    .badge {
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      background: color-mix(in srgb, var(--line) 42%, transparent);
+      color: var(--ink);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .mini-card {
+      padding: 20px;
+      box-shadow: 0 12px 34px rgba(22, 32, 51, 0.08);
+    }
+
+    .mini-card h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .mini-card ul,
+    .mini-card ol {
+      padding-left: 20px;
+      margin: 10px 0 0;
+    }
+
+    .accent-blue { border-top: 5px solid var(--blue); }
+    .accent-cyan { border-top: 5px solid var(--cyan); }
+    .accent-purple { border-top: 5px solid var(--purple); }
+    .accent-green { border-top: 5px solid var(--green); }
+    .accent-orange { border-top: 5px solid var(--orange); }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+      counter-reset: step;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fbfdff;
+    }
+
+    [data-theme="dark"] .timeline-item {
+      background: #0d1728;
+    }
+
+    .timeline-item::before {
+      counter-increment: step;
+      content: counter(step);
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: white;
+      font-weight: 900;
+    }
+
+    .comparison {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: white;
+    }
+
+    [data-theme="dark"] table {
+      background: #0d1728;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: color-mix(in srgb, var(--line) 36%, transparent);
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .callout {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--blue) 14%, transparent), color-mix(in srgb, var(--purple) 14%, transparent));
+      border: 1px solid #c7d2fe;
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      padding-top: 30px;
+      font-weight: 650;
+    }
+
+    @media (max-width: 900px) {
+      .hero,
+      .card-grid,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .hero-card,
+      .section {
+        padding: 24px;
+        border-radius: 22px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .controls {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div class="brand">Azure AI Dashboard</div>
+      <div class="controls" aria-label="Display controls">
+        <a class="control-btn" href="./practice.html">&#128221; Practice (100 Qs)</a>
+        <button class="control-btn" id="themeToggle" type="button">Dark mode</button>
+        <button class="control-btn" id="langToggle" type="button">Tiếng Việt</button>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-card">
+        <span class="eyebrow">AI-103 Study Summary</span>
+        <h1>Plan, build, optimize, and govern AI solutions on Azure</h1>
+        <p>This dashboard condenses the Microsoft Learn content into quick study cards for Microsoft Foundry, model selection, tool use, model optimization, and responsible generative AI.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><strong>100</strong><span>Practice questions</span></div>
+        <div class="stat-card"><strong>5</strong><span>Main learning areas</span></div>
+        <div class="stat-card"><strong>15+</strong><span>Topic categories</span></div>
+      </div>
+    </section>
+
+    <nav class="nav" aria-label="Page sections">
+      <a href="#ai">AI Capabilities</a>
+      <a href="#foundry">Microsoft Foundry</a>
+      <a href="#models">Models</a>
+      <a href="#tools">Tools</a>
+      <a href="#optimize">Optimization</a>
+      <a href="#responsible">Responsible AI</a>
+    </nav>
+
+    <section class="section" id="ai">
+      <div class="section-header">
+        <div>
+          <h2>What AI Solutions Can Do</h2>
+          <p>AI applications combine machine learning models, AI services, prompt engineering, and custom code to interpret inputs, reason over data, and generate responses or predictions.</p>
+        </div>
+        <span class="badge">Core capabilities</span>
+      </div>
+      <div class="card-grid">
+        <article class="mini-card accent-blue"><h3>Generative AI and agents</h3><p>LLMs generate original responses and can power agents with instructions, tools, and task responsibilities.</p></article>
+        <article class="mini-card accent-cyan"><h3>Natural language processing</h3><p>Analyzes text for classification, sentiment, summarization, and language understanding.</p></article>
+        <article class="mini-card accent-purple"><h3>Speech</h3><p>Recognizes and synthesizes speech for voice apps, transcription, translation, and conversational interfaces.</p></article>
+        <article class="mini-card accent-green"><h3>Computer vision</h3><p>Processes images, videos, and camera streams; multimodal models can also generate visual output.</p></article>
+        <article class="mini-card accent-orange"><h3>Information extraction</h3><p>Extracts key details from documents, forms, receipts, images, audio, and other content.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="foundry">
+      <div class="section-header">
+        <div>
+          <h2>Microsoft Foundry</h2>
+          <p>Microsoft Foundry is the recommended Azure platform for organizing AI projects, resources, models, agents, tools, knowledge, endpoints, and SDK-driven automation.</p>
+        </div>
+        <span class="badge">Platform</span>
+      </div>
+      <div class="two-grid">
+        <article class="mini-card accent-blue"><h3>Foundry projects</h3><p>Manage resource connections, data, code, models, agents, tools, and knowledge under a Foundry resource. A resource can support multiple projects.</p></article>
+        <article class="mini-card accent-purple"><h3>Foundry portal and SDK</h3><p>The portal supports visual development and testing. The SDK supports scripted project automation and CI/CD workflows.</p></article>
+      </div>
+      <div class="card-grid" style="margin-top:16px">
+        <article class="mini-card"><h3>Models</h3><p>Deploy LLMs from Foundry Models and consume them through Foundry or Azure OpenAI endpoints.</p></article>
+        <article class="mini-card"><h3>Agents</h3><p>Named AI configurations that combine an LLM, instructions, and tools for autonomous task automation.</p></article>
+        <article class="mini-card"><h3>Knowledge</h3><p>Foundry IQ can centralize MCP-based knowledge connections so agents can ground responses.</p></article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-header">
+        <div>
+          <h2>Foundry Tools and Developer Tools</h2>
+          <p>Foundry Tools provide prebuilt APIs and models for common AI tasks. Developers can use Visual Studio, VS Code, GitHub, GitHub Copilot, and SDKs for C#, Python, Node, TypeScript, Java, and more.</p>
+        </div>
+        <span class="badge">Build stack</span>
+      </div>
+      <div class="card-grid">
+        <article class="mini-card accent-blue"><h3>Azure Language</h3><p>Entity extraction, sentiment analysis, summarization, conversational language, and question answering.</p></article>
+        <article class="mini-card accent-cyan"><h3>Azure Speech</h3><p>Text to speech, speech to text, and live speech for conversational apps and agents.</p></article>
+        <article class="mini-card accent-green"><h3>Translator</h3><p>Translates text across many languages using state-of-the-art language models.</p></article>
+        <article class="mini-card accent-orange"><h3>Document Intelligence</h3><p>Extracts fields from invoices, receipts, forms, and complex documents.</p></article>
+        <article class="mini-card accent-purple"><h3>Content Understanding</h3><p>Multimodal analysis for documents, images, videos, and audio streams.</p></article>
+        <article class="mini-card"><h3>Foundry Toolkit for VS Code</h3><p>Browse resources, deploy models, test playgrounds, configure agents, and generate integration code.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="models">
+      <div class="section-header">
+        <div>
+          <h2>Select, Deploy, and Evaluate Models</h2>
+          <p>Foundry Models provides a catalog with more than 1,900 models. You can filter, compare benchmarks, deploy endpoints, test in playgrounds, and evaluate quality and safety.</p>
+        </div>
+        <span class="badge">Model lifecycle</span>
+      </div>
+      <div class="timeline">
+        <div class="timeline-item"><div><h3>Explore the catalog</h3><p>Search by provider, collection, capability, inference task, fine-tuning method, industry, and deployment options.</p></div></div>
+        <div class="timeline-item"><div><h3>Compare benchmarks</h3><p>Use quality, safety, cost, and performance metrics to choose a model that fits your scenario and budget.</p></div></div>
+        <div class="timeline-item"><div><h3>Deploy to endpoints</h3><p>Choose deployment types such as Global Standard, Provisioned, Batch, Data Zone, Regional, or Developer deployments.</p></div></div>
+        <div class="timeline-item"><div><h3>Test in playground</h3><p>Try prompts, system messages, temperature, max tokens, and code samples before application integration.</p></div></div>
+        <div class="timeline-item"><div><h3>Evaluate performance</h3><p>Use manual reviews, structured test cases, automated quality metrics, risk metrics, NLP metrics, and evaluator libraries.</p></div></div>
+      </div>
+      <div class="callout">Key benchmark dimensions: quality, safety, cost per token, latency, throughput, time to first token, and scenario-specific leaderboards.</div>
+    </section>
+
+    <section class="section" id="tools">
+      <div class="section-header">
+        <div>
+          <h2>Generative AI Apps That Use Tools</h2>
+          <p>Tools extend a model beyond static training data so it can retrieve current information, search private files, run code, or call application functions.</p>
+        </div>
+        <span class="badge">Responses API</span>
+      </div>
+      <div class="card-grid">
+        <article class="mini-card accent-purple"><h3>code_interpreter</h3><p>Runs Python in a sandbox for calculations, data analysis, file processing, and algorithm prototyping.</p></article>
+        <article class="mini-card accent-blue"><h3>web_search</h3><p>Retrieves current web information for source-aware answers about changing facts, current events, or policies.</p></article>
+        <article class="mini-card accent-green"><h3>file_search</h3><p>Searches uploaded files in vector stores to answer from trusted private documents with grounded context.</p></article>
+        <article class="mini-card accent-orange"><h3>function</h3><p>Lets the model request developer-defined functions while your application controls execution, validation, and outputs.</p></article>
+      </div>
+    </section>
+
+    <section class="section" id="optimize">
+      <div class="section-header">
+        <div>
+          <h2>Optimize Generative AI Performance</h2>
+          <p>Start with prompt engineering. Add RAG when the model needs trusted knowledge. Add fine-tuning when the model needs consistent behavior, style, or format.</p>
+        </div>
+        <span class="badge">Prompt + RAG + Fine-tune</span>
+      </div>
+      <div class="comparison">
+        <table>
+          <thead>
+            <tr><th>Strategy</th><th>Use When</th><th>Strength</th><th>Trade-off</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Prompt engineering</strong></td><td>You need tone, role, format, guardrails, examples, or parameter tuning.</td><td>Fast, low complexity, low cost.</td><td>Long prompts cost tokens and may not guarantee compliance.</td></tr>
+            <tr><td><strong>RAG</strong></td><td>The model needs private, current, factual, or domain-specific data.</td><td>Improves accuracy by retrieving trusted context.</td><td>Requires search indexes, embeddings, storage, and data maintenance.</td></tr>
+            <tr><td><strong>Fine-tuning</strong></td><td>You need reliable style, format, tool use, distillation, or reduced prompt length.</td><td>Embeds desired behavior into model weights.</td><td>Higher cost, training data needs, maintenance, and experimentation.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">Decision flow: start simple with prompts, add RAG for factual grounding, add fine-tuning for consistent behavior, and combine strategies only when the application requires it.</div>
+    </section>
+
+    <section class="section" id="responsible">
+      <div class="section-header">
+        <div>
+          <h2>Responsible Generative AI</h2>
+          <p>Responsible AI requires identifying risks, testing outputs, reducing harms across layers, and managing release and operations with clear governance.</p>
+        </div>
+        <span class="badge">Map, Measure, Mitigate, Manage</span>
+      </div>
+      <div class="card-grid">
+        <article class="mini-card accent-blue"><h3>Map</h3><p>Identify, prioritize, test, verify, document, and share potential harms such as offensive content, inaccuracies, or unsafe guidance.</p></article>
+        <article class="mini-card accent-cyan"><h3>Measure</h3><p>Create diverse prompts, generate outputs, categorize harm levels, and establish a baseline for improvement.</p></article>
+        <article class="mini-card accent-green"><h3>Mitigate</h3><p>Apply layered mitigations at the model, safety system, system message and grounding, and user experience layers.</p></article>
+        <article class="mini-card accent-purple"><h3>Manage</h3><p>Complete legal, privacy, security, and accessibility reviews. Plan phased release, incidents, rollback, feedback, and telemetry.</p></article>
+      </div>
+      <div class="two-grid" style="margin-top:16px">
+        <article class="mini-card"><h3>Microsoft Responsible AI principles</h3><ul><li>Fairness</li><li>Reliability and safety</li><li>Privacy and security</li><li>Inclusiveness</li><li>Transparency</li><li>Accountability</li></ul></article>
+        <article class="mini-card"><h3>Operational safeguards</h3><ul><li>Block harmful responses quickly</li><li>Block abusive users or IP addresses</li><li>Collect user feedback and issue reports</li><li>Track privacy-compliant telemetry</li><li>Maintain incident and rollback plans</li></ul></article>
+      </div>
+    </section>
+
+    <footer>Created as a local study UI from the provided Microsoft Learn content.</footer>
+  </main>
+  <script>
+    const translations = {
+      "Azure AI Dashboard": "Bảng tóm tắt Azure AI",
+      "Practice UI": "Giao diện luyện đề",
+      "Dark mode": "Chế độ tối",
+      "Light mode": "Chế độ sáng",
+      "Tiếng Việt": "Tiếng Việt",
+      "English": "English",
+      "AI-103 Study Summary": "Tóm tắt học tập AI-103",
+      "Plan, build, optimize, and govern AI solutions on Azure": "Lập kế hoạch, xây dựng, tối ưu và quản trị giải pháp AI trên Azure",
+      "This dashboard condenses the Microsoft Learn content into quick study cards for Microsoft Foundry, model selection, tool use, model optimization, and responsible generative AI.": "Bảng này tóm tắt nội dung Microsoft Learn thành các thẻ học nhanh về Microsoft Foundry, chọn mô hình, dùng công cụ, tối ưu mô hình và AI tạo sinh có trách nhiệm.",
+      "Main learning areas": "Mảng kiến thức chính",
+      "Responsible AI stages": "Giai đoạn AI có trách nhiệm",
+      "Optimization strategies": "Chiến lược tối ưu",
+      "AI Capabilities": "Năng lực AI",
+      "Models": "Mô hình",
+      "Tools": "Công cụ",
+      "Optimization": "Tối ưu hóa",
+      "Responsible AI": "AI có trách nhiệm",
+      "What AI Solutions Can Do": "Giải pháp AI có thể làm gì",
+      "AI applications combine machine learning models, AI services, prompt engineering, and custom code to interpret inputs, reason over data, and generate responses or predictions.": "Ứng dụng AI kết hợp mô hình học máy, dịch vụ AI, kỹ thuật prompt và mã tùy chỉnh để diễn giải đầu vào, suy luận trên dữ liệu và tạo phản hồi hoặc dự đoán.",
+      "Core capabilities": "Năng lực cốt lõi",
+      "Generative AI and agents": "AI tạo sinh và agent",
+      "LLMs generate original responses and can power agents with instructions, tools, and task responsibilities.": "LLM tạo phản hồi mới và có thể vận hành agent với chỉ dẫn, công cụ và trách nhiệm nhiệm vụ.",
+      "Natural language processing": "Xử lý ngôn ngữ tự nhiên",
+      "Analyzes text for classification, sentiment, summarization, and language understanding.": "Phân tích văn bản để phân loại, nhận diện cảm xúc, tóm tắt và hiểu ngôn ngữ.",
+      "Speech": "Giọng nói",
+      "Recognizes and synthesizes speech for voice apps, transcription, translation, and conversational interfaces.": "Nhận dạng và tổng hợp giọng nói cho ứng dụng thoại, phiên âm, dịch và giao diện hội thoại.",
+      "Computer vision": "Thị giác máy tính",
+      "Processes images, videos, and camera streams; multimodal models can also generate visual output.": "Xử lý hình ảnh, video và luồng camera; mô hình đa phương thức cũng có thể tạo đầu ra hình ảnh.",
+      "Information extraction": "Trích xuất thông tin",
+      "Extracts key details from documents, forms, receipts, images, audio, and other content.": "Trích xuất thông tin quan trọng từ tài liệu, biểu mẫu, hóa đơn, hình ảnh, âm thanh và nội dung khác.",
+      "Microsoft Foundry is the recommended Azure platform for organizing AI projects, resources, models, agents, tools, knowledge, endpoints, and SDK-driven automation.": "Microsoft Foundry là nền tảng Azure được khuyến nghị để tổ chức dự án AI, tài nguyên, mô hình, agent, công cụ, tri thức, endpoint và tự động hóa bằng SDK.",
+      "Platform": "Nền tảng",
+      "Foundry projects": "Dự án Foundry",
+      "Manage resource connections, data, code, models, agents, tools, and knowledge under a Foundry resource. A resource can support multiple projects.": "Quản lý kết nối tài nguyên, dữ liệu, mã, mô hình, agent, công cụ và tri thức trong một tài nguyên Foundry. Một tài nguyên có thể hỗ trợ nhiều dự án.",
+      "Foundry portal and SDK": "Cổng Foundry và SDK",
+      "The portal supports visual development and testing. The SDK supports scripted project automation and CI/CD workflows.": "Cổng hỗ trợ phát triển và kiểm thử trực quan. SDK hỗ trợ tự động hóa dự án bằng script và quy trình CI/CD.",
+      "Deploy LLMs from Foundry Models and consume them through Foundry or Azure OpenAI endpoints.": "Triển khai LLM từ Foundry Models và sử dụng qua endpoint Foundry hoặc Azure OpenAI.",
+      "Agents": "Agent",
+      "Named AI configurations that combine an LLM, instructions, and tools for autonomous task automation.": "Cấu hình AI có tên, kết hợp LLM, chỉ dẫn và công cụ để tự động hóa tác vụ.",
+      "Knowledge": "Tri thức",
+      "Foundry IQ can centralize MCP-based knowledge connections so agents can ground responses.": "Foundry IQ có thể tập trung kết nối tri thức dựa trên MCP để agent tạo phản hồi có căn cứ.",
+      "Foundry Tools and Developer Tools": "Foundry Tools và công cụ lập trình",
+      "Foundry Tools provide prebuilt APIs and models for common AI tasks. Developers can use Visual Studio, VS Code, GitHub, GitHub Copilot, and SDKs for C#, Python, Node, TypeScript, Java, and more.": "Foundry Tools cung cấp API và mô hình dựng sẵn cho các tác vụ AI phổ biến. Lập trình viên có thể dùng Visual Studio, VS Code, GitHub, GitHub Copilot và SDK cho C#, Python, Node, TypeScript, Java, v.v.",
+      "Build stack": "Bộ công cụ xây dựng",
+      "Entity extraction, sentiment analysis, summarization, conversational language, and question answering.": "Trích xuất thực thể, phân tích cảm xúc, tóm tắt, ngôn ngữ hội thoại và hỏi đáp.",
+      "Text to speech, speech to text, and live speech for conversational apps and agents.": "Văn bản thành giọng nói, giọng nói thành văn bản và giọng nói trực tiếp cho ứng dụng hội thoại và agent.",
+      "Translator": "Dịch thuật",
+      "Translates text across many languages using state-of-the-art language models.": "Dịch văn bản qua nhiều ngôn ngữ bằng các mô hình ngôn ngữ hiện đại.",
+      "Document Intelligence": "Document Intelligence",
+      "Extracts fields from invoices, receipts, forms, and complex documents.": "Trích xuất trường dữ liệu từ hóa đơn, biên lai, biểu mẫu và tài liệu phức tạp.",
+      "Content Understanding": "Hiểu nội dung",
+      "Multimodal analysis for documents, images, videos, and audio streams.": "Phân tích đa phương thức cho tài liệu, hình ảnh, video và luồng âm thanh.",
+      "Foundry Toolkit for VS Code": "Foundry Toolkit cho VS Code",
+      "Browse resources, deploy models, test playgrounds, configure agents, and generate integration code.": "Duyệt tài nguyên, triển khai mô hình, thử playground, cấu hình agent và tạo mã tích hợp.",
+      "Select, Deploy, and Evaluate Models": "Chọn, triển khai và đánh giá mô hình",
+      "Foundry Models provides a catalog with more than 1,900 models. You can filter, compare benchmarks, deploy endpoints, test in playgrounds, and evaluate quality and safety.": "Foundry Models cung cấp danh mục hơn 1.900 mô hình. Bạn có thể lọc, so sánh benchmark, triển khai endpoint, thử trong playground và đánh giá chất lượng, an toàn.",
+      "Model lifecycle": "Vòng đời mô hình",
+      "Explore the catalog": "Khám phá danh mục",
+      "Search by provider, collection, capability, inference task, fine-tuning method, industry, and deployment options.": "Tìm theo nhà cung cấp, bộ sưu tập, năng lực, tác vụ suy luận, phương pháp fine-tuning, ngành và tùy chọn triển khai.",
+      "Compare benchmarks": "So sánh benchmark",
+      "Use quality, safety, cost, and performance metrics to choose a model that fits your scenario and budget.": "Dùng chỉ số chất lượng, an toàn, chi phí và hiệu năng để chọn mô hình phù hợp kịch bản và ngân sách.",
+      "Deploy to endpoints": "Triển khai tới endpoint",
+      "Choose deployment types such as Global Standard, Provisioned, Batch, Data Zone, Regional, or Developer deployments.": "Chọn kiểu triển khai như Global Standard, Provisioned, Batch, Data Zone, Regional hoặc Developer.",
+      "Test in playground": "Kiểm thử trong playground",
+      "Try prompts, system messages, temperature, max tokens, and code samples before application integration.": "Thử prompt, system message, temperature, max token và mẫu mã trước khi tích hợp ứng dụng.",
+      "Evaluate performance": "Đánh giá hiệu năng",
+      "Use manual reviews, structured test cases, automated quality metrics, risk metrics, NLP metrics, and evaluator libraries.": "Dùng đánh giá thủ công, test case có cấu trúc, chỉ số chất lượng tự động, chỉ số rủi ro, chỉ số NLP và thư viện evaluator.",
+      "Key benchmark dimensions: quality, safety, cost per token, latency, throughput, time to first token, and scenario-specific leaderboards.": "Các chiều benchmark chính: chất lượng, an toàn, chi phí mỗi token, độ trễ, thông lượng, thời gian tới token đầu tiên và bảng xếp hạng theo kịch bản.",
+      "Generative AI Apps That Use Tools": "Ứng dụng AI tạo sinh dùng công cụ",
+      "Tools extend a model beyond static training data so it can retrieve current information, search private files, run code, or call application functions.": "Công cụ mở rộng mô hình vượt ngoài dữ liệu huấn luyện tĩnh để truy xuất thông tin hiện tại, tìm file riêng, chạy mã hoặc gọi hàm ứng dụng.",
+      "Responses API": "Responses API",
+      "Runs Python in a sandbox for calculations, data analysis, file processing, and algorithm prototyping.": "Chạy Python trong sandbox để tính toán, phân tích dữ liệu, xử lý file và thử nghiệm thuật toán.",
+      "Retrieves current web information for source-aware answers about changing facts, current events, or policies.": "Truy xuất thông tin web hiện tại để trả lời có nguồn về dữ kiện thay đổi, sự kiện mới hoặc chính sách.",
+      "Searches uploaded files in vector stores to answer from trusted private documents with grounded context.": "Tìm file đã tải lên trong vector store để trả lời từ tài liệu riêng đáng tin cậy với ngữ cảnh có căn cứ.",
+      "Lets the model request developer-defined functions while your application controls execution, validation, and outputs.": "Cho phép mô hình yêu cầu hàm do lập trình viên định nghĩa, còn ứng dụng kiểm soát thực thi, xác thực và đầu ra.",
+      "Optimize Generative AI Performance": "Tối ưu hiệu năng AI tạo sinh",
+      "Start with prompt engineering. Add RAG when the model needs trusted knowledge. Add fine-tuning when the model needs consistent behavior, style, or format.": "Bắt đầu với prompt engineering. Thêm RAG khi mô hình cần tri thức đáng tin cậy. Thêm fine-tuning khi cần hành vi, phong cách hoặc định dạng nhất quán.",
+      "Prompt + RAG + Fine-tune": "Prompt + RAG + Fine-tune",
+      "Strategy": "Chiến lược",
+      "Use When": "Dùng khi",
+      "Strength": "Điểm mạnh",
+      "Trade-off": "Đánh đổi",
+      "Prompt engineering": "Prompt engineering",
+      "You need tone, role, format, guardrails, examples, or parameter tuning.": "Bạn cần giọng điệu, vai trò, định dạng, guardrail, ví dụ hoặc tinh chỉnh tham số.",
+      "Fast, low complexity, low cost.": "Nhanh, ít phức tạp, chi phí thấp.",
+      "Long prompts cost tokens and may not guarantee compliance.": "Prompt dài tốn token và không luôn bảo đảm tuân thủ.",
+      "The model needs private, current, factual, or domain-specific data.": "Mô hình cần dữ liệu riêng, hiện tại, chính xác hoặc theo miền.",
+      "Improves accuracy by retrieving trusted context.": "Cải thiện độ chính xác bằng cách truy xuất ngữ cảnh đáng tin cậy.",
+      "Requires search indexes, embeddings, storage, and data maintenance.": "Cần chỉ mục tìm kiếm, embedding, lưu trữ và bảo trì dữ liệu.",
+      "Fine-tuning": "Fine-tuning",
+      "You need reliable style, format, tool use, distillation, or reduced prompt length.": "Bạn cần phong cách, định dạng, dùng công cụ, chưng cất mô hình hoặc giảm độ dài prompt một cách ổn định.",
+      "Embeds desired behavior into model weights.": "Đưa hành vi mong muốn vào trọng số mô hình.",
+      "Higher cost, training data needs, maintenance, and experimentation.": "Chi phí cao hơn, cần dữ liệu huấn luyện, bảo trì và thử nghiệm.",
+      "Decision flow: start simple with prompts, add RAG for factual grounding, add fine-tuning for consistent behavior, and combine strategies only when the application requires it.": "Luồng quyết định: bắt đầu đơn giản với prompt, thêm RAG để có căn cứ dữ kiện, thêm fine-tuning để hành vi nhất quán và chỉ kết hợp khi ứng dụng cần.",
+      "Responsible Generative AI": "AI tạo sinh có trách nhiệm",
+      "Responsible AI requires identifying risks, testing outputs, reducing harms across layers, and managing release and operations with clear governance.": "AI có trách nhiệm đòi hỏi xác định rủi ro, kiểm thử đầu ra, giảm tác hại qua nhiều lớp và quản lý phát hành, vận hành bằng quản trị rõ ràng.",
+      "Map, Measure, Mitigate, Manage": "Map, Measure, Mitigate, Manage",
+      "Map": "Map - Lập bản đồ rủi ro",
+      "Measure": "Measure - Đo lường",
+      "Mitigate": "Mitigate - Giảm thiểu",
+      "Manage": "Manage - Quản lý",
+      "Identify, prioritize, test, verify, document, and share potential harms such as offensive content, inaccuracies, or unsafe guidance.": "Xác định, ưu tiên, kiểm thử, xác minh, ghi tài liệu và chia sẻ tác hại tiềm ẩn như nội dung xúc phạm, sai lệch hoặc hướng dẫn không an toàn.",
+      "Create diverse prompts, generate outputs, categorize harm levels, and establish a baseline for improvement.": "Tạo prompt đa dạng, sinh đầu ra, phân loại mức độ tác hại và thiết lập đường cơ sở để cải thiện.",
+      "Apply layered mitigations at the model, safety system, system message and grounding, and user experience layers.": "Áp dụng giảm thiểu theo lớp ở mô hình, hệ thống an toàn, system message và grounding, cùng lớp trải nghiệm người dùng.",
+      "Complete legal, privacy, security, and accessibility reviews. Plan phased release, incidents, rollback, feedback, and telemetry.": "Hoàn tất đánh giá pháp lý, quyền riêng tư, bảo mật và khả năng tiếp cận. Lập kế hoạch phát hành theo giai đoạn, sự cố, rollback, phản hồi và telemetry.",
+      "Microsoft Responsible AI principles": "Nguyên tắc Responsible AI của Microsoft",
+      "Fairness": "Công bằng",
+      "Reliability and safety": "Độ tin cậy và an toàn",
+      "Privacy and security": "Quyền riêng tư và bảo mật",
+      "Inclusiveness": "Bao hàm",
+      "Transparency": "Minh bạch",
+      "Accountability": "Trách nhiệm giải trình",
+      "Operational safeguards": "Biện pháp bảo vệ vận hành",
+      "Block harmful responses quickly": "Chặn nhanh phản hồi có hại",
+      "Block abusive users or IP addresses": "Chặn người dùng hoặc IP lạm dụng",
+      "Collect user feedback and issue reports": "Thu thập phản hồi người dùng và báo cáo sự cố",
+      "Track privacy-compliant telemetry": "Theo dõi telemetry tuân thủ quyền riêng tư",
+      "Maintain incident and rollback plans": "Duy trì kế hoạch sự cố và rollback",
+      "Created as a local study UI from the provided Microsoft Learn content.": "Được tạo như một UI học tập cục bộ từ nội dung Microsoft Learn đã cung cấp."
+    };
+
+    const reverseTranslations = Object.fromEntries(
+      Object.entries(translations).map(([english, vietnamese]) => [vietnamese, english])
+    );
+
+    const themeToggle = document.querySelector("#themeToggle");
+    const langToggle = document.querySelector("#langToggle");
+    const translatableSelector = "h1, h2, h3, p, span, a, th, td, li, footer, .brand, .control-btn";
+
+    function setTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      localStorage.setItem("study-theme", theme);
+      themeToggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      if (localStorage.getItem("study-lang") === "vi") {
+        themeToggle.textContent = translations[themeToggle.textContent];
+      }
+    }
+
+    function setLanguage(lang) {
+      document.documentElement.lang = lang === "vi" ? "vi" : "en";
+      localStorage.setItem("study-lang", lang);
+
+      document.querySelectorAll(translatableSelector).forEach((element) => {
+        const current = element.textContent.trim();
+        if (!current) return;
+        if (!element.dataset.en) {
+          element.dataset.en = reverseTranslations[current] || current;
+        }
+        const english = element.dataset.en;
+        element.textContent = lang === "vi" ? translations[english] || english : english;
+      });
+
+      langToggle.textContent = lang === "vi" ? "English" : "Tiếng Việt";
+      const theme = document.documentElement.dataset.theme || "light";
+      themeToggle.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      if (lang === "vi") {
+        themeToggle.textContent = translations[themeToggle.textContent];
+      }
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      setTheme(nextTheme);
+      setLanguage(localStorage.getItem("study-lang") || "en");
+    });
+
+    langToggle.addEventListener("click", () => {
+      const nextLang = localStorage.getItem("study-lang") === "vi" ? "en" : "vi";
+      setLanguage(nextLang);
+    });
+
+    setTheme(localStorage.getItem("study-theme") || "light");
+    setLanguage(localStorage.getItem("study-lang") || "en");
+  </script>
+</body>
+</html>
