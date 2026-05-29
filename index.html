@@ -315,6 +315,147 @@
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    /* Drag-Drop Enhanced UI */
+    .drag-drop-container {
+      margin: 20px 0;
+      padding: 20px;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .drag-drop-header {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .drag-drop-field {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--surface);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .drag-drop-field:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .drag-drop-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+      display: block;
+    }
+    .drag-drop-select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      background: var(--bg);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      appearance: none;
+      background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%236366f1" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+      padding-right: 40px;
+    }
+    .drag-drop-select:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .drag-drop-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-glow);
+    }
+    .drag-drop-select option {
+      padding: 10px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .drag-drop-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+    }
+    .drag-option {
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: grab;
+      transition: var(--transition);
+      text-align: center;
+      font-weight: 600;
+      font-size: 13px;
+      user-select: none;
+    }
+    .drag-option:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .drag-option:active {
+      cursor: grabbing;
+      transform: scale(0.98);
+    }
+    .drag-drop-notice-enhanced {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--primary-glow), var(--surface2));
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--text);
+    }
+    .drag-drop-notice-enhanced::before {
+      content: "💡";
+      font-size: 20px;
+    }
+    .drag-drop-answer-summary {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--primary-glow);
+      border-radius: 10px;
+      border: 2px solid var(--primary);
+    }
+    .drag-drop-answer-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .drag-drop-answer-item:last-child {
+      border-bottom: none;
+    }
+    .drag-drop-answer-label {
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .drag-drop-answer-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
   </style>
 </head>
 <body>
@@ -517,7 +658,7 @@
       if (q.type === 'yes_no_statements') {
         html += renderYesNo(q, ans, showResult);
       } else if (q.type === 'drag-drop') {
-        html += '<div class="drag-drop-notice" style="padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:16px;color:var(--muted);font-style:italic;">This is a drag-and-drop / hot area question. Review the image above and check the explanation for the correct answer.</div>';
+        html += renderDragDropInteractive(q, ans, showResult);
       } else if (q.options && q.options.length) {
         html += '<div class="options-list">';
         q.options.forEach(opt => {
@@ -560,6 +701,128 @@
       document.getElementById('questionArea').innerHTML = html;
       document.getElementById('pageInfo').textContent = (current+1) + ' / ' + filtered.length;
     }
+
+    // Parse and render interactive drag-drop questions
+    function renderDragDropInteractive(q, ans, showResult) {
+      let html = '';
+      
+      // Parse the prompt to extract dropdowns/fields
+      const fields = parseDragDropPrompt(q.prompt);
+      
+      if (fields.length === 0) {
+        // Fallback to simple notice if parsing fails
+        html += '<div class="drag-drop-notice-enhanced">';
+        html += '<span>This is a drag-and-drop / selection question. Review the prompt above and select your answers from the dropdowns below, then check the explanation for the correct answer.</span>';
+        html += '</div>';
+        return html;
+      }
+      
+      html += '<div class="drag-drop-container">';
+      html += '<div class="drag-drop-header">📝 Interactive Drag & Drop Question</div>';
+      
+      // Render each field
+      fields.forEach((field, idx) => {
+        html += '<div class="drag-drop-field">';
+        html += '<label class="drag-drop-label">' + esc(field.label) + '</label>';
+        
+        if (field.options && field.options.length > 0) {
+          html += '<select class="drag-drop-select" id="dd-select-'+q.id+'-'+idx+'" onchange="window._updateDragDrop('+q.id+','+idx+',this.value)" '+(showResult ? 'disabled' : '')+'>';
+          html += '<option value="">-- Select an option --</option>';
+          field.options.forEach(opt => {
+            const selected = ans && ans.dragDropAnswers && ans.dragDropAnswers[idx] === opt;
+            html += '<option value="'+esc(opt)+'" '+(selected ? 'selected' : '')+'>'+esc(opt)+'</option>';
+          });
+          html += '</select>';
+        } else {
+          html += '<input type="text" class="drag-drop-select" id="dd-input-'+q.id+'-'+idx+'" onchange="window._updateDragDrop('+q.id+','+idx+',this.value)" value="'+(ans && ans.dragDropAnswers ? esc(ans.dragDropAnswers[idx] || '') : '')+'" '+(showResult ? 'disabled' : '')+' placeholder="Enter your answer...">';
+        }
+        
+        html += '</div>';
+      });
+      
+      // Show current selections summary
+      if (ans && ans.dragDropAnswers && ans.dragDropAnswers.some(a => a)) {
+        html += '<div class="drag-drop-answer-summary">';
+        html += '<div style="font-weight:700;margin-bottom:8px;color:var(--primary)">📋 Your Selections:</div>';
+        ans.dragDropAnswers.forEach((answer, idx) => {
+          if (answer && fields[idx]) {
+            html += '<div class="drag-drop-answer-item">';
+            html += '<span class="drag-drop-answer-label">'+esc(fields[idx].label)+':</span>';
+            html += '<span class="drag-drop-answer-value">'+esc(answer)+'</span>';
+            html += '</div>';
+          }
+        });
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      
+      return html;
+    }
+
+    // Parse drag-drop prompt to extract fields and options
+    function parseDragDropPrompt(prompt) {
+      const fields = [];
+      
+      // Pattern 1: "* Label: [Dropdown Menu]" or "* Label: [Value]"
+      const pattern1 = /\*\s*([^:\n]+):\s*\[([^\]]+)\]/gi;
+      let match;
+      while ((match = pattern1.exec(prompt)) !== null) {
+        const label = match[1].trim();
+        const fieldType = match[2].trim();
+        
+        fields.push({
+          label: label,
+          type: fieldType.toLowerCase().includes('dropdown') || fieldType.toLowerCase().includes('menu') ? 'dropdown' : 'input',
+          options: extractOptionsFromContext(prompt, label)
+        });
+      }
+      
+      // Pattern 2: Look for "Options:", "Values:", "Choices:" sections
+      const optionsMatch = prompt.match(/(Options|Values|Choices|Available\s+options):\s*\n((?:\*[^\n]+\n?)+)/i);
+      if (optionsMatch && fields.length > 0) {
+        const optionsList = optionsMatch[2].match(/\*\s*([^\n]+)/g);
+        if (optionsList) {
+          const options = optionsList.map(o => o.replace(/^\*\s*/, '').trim());
+          // Apply options to all fields if they don't have specific options
+          fields.forEach(field => {
+            if (!field.options || field.options.length === 0) {
+              field.options = options;
+            }
+          });
+        }
+      }
+      
+      return fields;
+    }
+
+    // Extract options from context for a specific field
+    function extractOptionsFromContext(prompt, fieldLabel) {
+      // Look for options specific to this field in the explanation or prompt
+      const fieldPattern = new RegExp(fieldLabel + '.*?:\\s*([^\\n]+)', 'i');
+      const match = fieldPattern.exec(prompt);
+      
+      if (match) {
+        // Try to extract comma-separated values or options
+        const optionsStr = match[1];
+        const options = optionsStr.split(/[,/|]/).map(o => o.trim()).filter(o => o && o.length < 100);
+        if (options.length > 1 && options.length < 20) {
+          return options;
+        }
+      }
+      
+      // Return common generic options as fallback
+      return [];
+    }
+
+    // Update drag-drop answer
+    window._updateDragDrop = function(qId, fieldIdx, value) {
+      if (!answers[qId]) answers[qId] = { selected: [], correct: false, checked: false, dragDropAnswers: [] };
+      if (!answers[qId].dragDropAnswers) answers[qId].dragDropAnswers = [];
+      answers[qId].dragDropAnswers[fieldIdx] = value;
+      saveState();
+      renderQuestion();
+    };
 
     function renderYesNo(q, ans, showResult) {
       let html = '<div class="options-list">';
@@ -614,9 +877,9 @@
 
       // For drag-drop questions, just mark as checked to show explanation
       if (q.type === 'drag-drop') {
-        if (!answers[qId]) answers[qId] = { selected: [] };
+        if (!answers[qId]) answers[qId] = { selected: [], dragDropAnswers: [] };
         answers[qId].checked = true;
-        answers[qId].correct = null; // not scored
+        answers[qId].correct = null; // not auto-scored, user reviews explanation
         saveState();
         render();
         return;

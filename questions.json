@@ -206,7 +206,7 @@
       "questionImages": [],
       "options": [],
       "answer": [],
-      "explanation": "Answer: authentication_method: OIDC / workload identity federation; if_threshold_not_met: Fail the workflow/job so branch protection blocks the merge\n\nCI/CD cho Foundry nen uu tien keyless auth bang OIDC; workflow fail se chan merge khi co branch protection.",
+      "explanation": "Answer: Authentication method: DefaultAzureCredential (Using Managed Identity / Service Principal with Federated Identity / OIDC); If the evaluation results are NOT met, configure the workflow to: Fail the job (or Fail the workflow run / Return a non-zero exit code)\n\nCI/CD cho Foundry nen uu tien keyless auth bang OIDC/DefaultAzureCredential thong qua federated identity; workflow fail se chan merge khi co branch protection.",
       "explanationImages": []
     },
     {
@@ -383,7 +383,7 @@
       "questionImages": [],
       "options": [],
       "answer": [],
-      "explanation": "Answer: metrics_to_enable: Azure AI inference/request metrics; diagnostic_log_to_collect: Inference diagnostic logs / model invocation logs\n\nCan bat metrics va diagnostic logs o tang suy luan de phan biet rate limiting, model failures, va availability issues.",
+      "explanation": "Answer: Metrics to enable: Request volume hoặc Token usage (Khối lượng yêu cầu / Sử dụng Token); Diagnostic log to collect: Application Insights hoặc Trace logs\n\nLoi HTTP 429 la loi vuot qua gioi han tai nguyen (rate limits), viec bat cac so lieu Request volume/Token usage giup xac dinh cac dot tang dot bien trong gio cao diem. Nhat ky chan doan Application Insights/Trace logs cho phep theo doi tung cuoc hoi thoai chi tiet, phan tich viec goi cong cu (nhu RAG/Foundry IQ) va tim nguyen nhan gay loi suy luan dan den thong bao 'Khong tim thay thong tin lien quan'.",
       "explanationImages": []
     },
     {
@@ -457,7 +457,7 @@
       "questionImages": [],
       "options": [],
       "answer": [],
-      "explanation": "Answer: knowledge_grounding: knowledge; memory: user-scoped long-term memory\n\nKnowledge dung cho grounded curated repos; long-term memory theo user de giu preferences qua nhieu session.",
+      "explanation": "Answer: Knowledge grounding: Foundry IQ (or Azure AI Search / file_search tool); Memory: Persistent threads (or Long-term memory / Database-backed memory store) | AgentSession (hoặc AgentThread)\n\nFoundry IQ/Azure AI Search dung cho grounded retrieval tu curated repos; Persistent threads/AgentSession giu trang thai va preferences qua nhieu chat sessions.",
       "explanationImages": []
     },
     {
@@ -959,9 +959,9 @@
         }
       ],
       "answer": [
-        "A"
+        "D"
       ],
-      "explanation": "High input fidelity giu do trung thuc voi hinh anh tham chieu tot hon trong image generation/editing.",
+      "explanation": "Include both prompt and input image in the request de model co the tham chieu den hinh anh nguon va giu nguyen product identity/visual characteristics khi generate hinh moi.",
       "explanationImages": []
     },
     {
@@ -1128,7 +1128,7 @@
       "questionImages": [],
       "options": [],
       "answer": [],
-      "explanation": "Answer: orchestration_pattern: workflow / deterministic sequential orchestration; approval_checkpoints: Add human approval only on the high-risk branch\n\nWorkflow cho predictable execution; approval checkpoint nen dat o nhanh high-risk.",
+      "explanation": "Answer: Orchestration pattern: Sequential (or Routing); Approval checkpoints: Conditional (or Rule-based / Conditional Human-in-the-loop)\n\nSequential/Routing orchestration dam bao predictable execution giua cac agents; Conditional approval checkpoints chi yeu cau human approval cho nhanh high-risk, tu dong finalize low-risk updates.",
       "explanationImages": []
     },
     {
@@ -1346,9 +1346,9 @@
         }
       ],
       "answer": [
-        "B"
+        "A"
       ],
-      "explanation": "Session scope chi giu memory trong pham vi phien hien tai, khong luu sang session khac.",
+      "explanation": "{{$userId}} scope giu memory theo user nhung chi trong pham vi session hien tai; neu muon conversation history khong persist cross sessions thi nen dung conversationId scope hoac session scope. Tuy nhien, dap an A phu hop hon de dam bao memory khong bi share giua cac users khac nhau.",
       "explanationImages": []
     },
     {
@@ -1391,7 +1391,7 @@
       "questionImages": [],
       "options": [],
       "answer": [],
-      "explanation": "Answer: supported_by_content_and_addresses_query: Groundedness and relevance evaluators; contains_sensitive_or_proprietary_information: Protected material evaluation\n\nGroundedness + relevance do muc do tra loi dung cau hoi va co ho tro tu content; protected material do nguy co lo/tao noi dung duoc bao ho.",
+      "explanation": "Answer: To measure whether the responses are supported by the provided content and address the user query: Groundedness and Relevance; To measure whether responses contain sensitive or proprietary information: Custom evaluator (or Protected material / Data leakage)\n\nGroundedness + Relevance do muc do tra loi dung cau hoi va co ho tro tu content; Custom evaluator hoac Protected material evaluation do nguy co lo/tao sensitive/proprietary information.",
       "explanationImages": []
     },
     {
