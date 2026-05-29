@@ -47,13 +47,33 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-    .app { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .app { max-width: 1600px; margin: 0 auto; padding: 20px; }
+
+    /* Split Layout Container */
+    .split-container {
+      display: grid;
+      grid-template-columns: minmax(300px, 380px) 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Left Sidebar */
+    .left-sidebar {
+      position: sticky;
+      top: 20px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+    }
+    .left-sidebar::-webkit-scrollbar { width: 6px; }
+    .left-sidebar::-webkit-scrollbar-track { background: var(--surface2); border-radius: 3px; }
+    .left-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .left-sidebar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
     /* Header */
     .header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 28px; background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); margin-bottom: 24px; box-shadow: var(--shadow);
+      padding: 16px 24px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 20px; box-shadow: var(--shadow);
     }
     .header-left { display: flex; align-items: center; gap: 16px; }
     .logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -67,7 +87,7 @@
 
     /* Stats Bar */
     .stats-bar {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 24px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px;
     }
     .stat-item {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
@@ -81,8 +101,8 @@
 
     /* Controls */
     .controls {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 24px;
-      padding: 16px 20px; background: var(--surface); border: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px;
+      padding: 14px 18px; background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius-sm);
     }
     .controls select, .controls input {
@@ -93,7 +113,7 @@
     .filter-label { font-size: 13px; font-weight: 600; color: var(--muted); }
 
     /* Progress Bar */
-    .progress-wrap { margin-bottom: 24px; }
+    .progress-wrap { margin-bottom: 20px; }
     .progress-bar { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.5s ease; }
     .progress-text { display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
@@ -101,9 +121,35 @@
     /* Question Card */
     .question-card {
       background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 32px; margin-bottom: 20px; box-shadow: var(--shadow); transition: var(--transition);
+      padding: 28px; box-shadow: var(--shadow); transition: var(--transition);
     }
-    .question-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .question-meta { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .btn-copy {
+      margin-left: auto;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-glow);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-copy:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .btn-copy.copied {
+      background: var(--success);
+      color: white;
+      border-color: var(--success);
+    }
     .q-number { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; padding: 4px 12px; border-radius: 999px; font-weight: 800; font-size: 13px; }
     .q-topic { padding: 4px 10px; border-radius: 999px; background: var(--primary-glow); color: var(--primary); font-size: 12px; font-weight: 600; border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent); }
     .q-type { padding: 4px 10px; border-radius: 999px; background: var(--surface2); color: var(--muted); font-size: 12px; font-weight: 600; }
@@ -150,21 +196,65 @@
     .answer-badge { margin-top: 12px; font-weight: 700; color: var(--success); font-size: 14px; }
 
     /* Navigation */
-    .nav-buttons { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; padding-bottom: 40px; }
+    .nav-buttons { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 24px; }
     .page-info { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+    /* Right Content Area */
+    .right-content {
+      min-height: 400px;
+    }
+    
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--success);
+      color: white;
+      padding: 16px 24px;
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      font-weight: 600;
+      font-size: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     /* Question Grid */
     .question-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px;
-      margin-bottom: 24px; padding: 16px; background: var(--surface); border: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px;
+      padding: 16px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); box-shadow: var(--shadow);
+    }
+    .question-grid-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      padding: 14px;
+      background: linear-gradient(135deg, var(--surface), var(--surface2));
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
     .q-grid-item {
       aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-      border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer;
+      border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;
       border: 2px solid var(--border); background: var(--surface2); transition: var(--transition);
     }
-    .q-grid-item:hover { border-color: var(--primary); transform: scale(1.08); }
+    .q-grid-item:hover { border-color: var(--primary); transform: scale(1.1); box-shadow: 0 4px 12px var(--primary-glow); }
     .q-grid-item.answered-correct { background: var(--success-bg); border-color: var(--success); color: var(--success); }
     .q-grid-item.answered-wrong { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
     .q-grid-item.current { border-color: var(--primary); background: var(--primary-glow); color: var(--primary); box-shadow: 0 0 12px var(--primary-glow); }
@@ -194,6 +284,22 @@
     .result-grid strong { display: block; font-size: 20px; }
 
     /* Responsive */
+    @media (max-width: 1200px) {
+      .split-container {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .left-sidebar {
+        position: relative;
+        top: 0;
+        max-height: none;
+        margin-bottom: 20px;
+      }
+      .question-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+      }
+    }
     @media (max-width: 768px) {
       .app { padding: 12px; }
       .header { flex-direction: column; gap: 12px; align-items: stretch; }
@@ -267,14 +373,23 @@
       <div class="progress-text"><span id="progressLabel">0 / 0 answered</span><span id="progressPct">0%</span></div>
     </div>
 
-    <div class="question-grid" id="questionGrid"></div>
+    <div class="split-container">
+      <!-- Left Sidebar: Question List -->
+      <div class="left-sidebar">
+        <div class="question-grid-title">📋 Danh sách câu hỏi</div>
+        <div class="question-grid" id="questionGrid"></div>
+      </div>
 
-    <div id="questionArea"></div>
+      <!-- Right Content: Question Details -->
+      <div class="right-content">
+        <div id="questionArea"></div>
 
-    <div class="nav-buttons">
-      <button class="btn" id="prevBtn">&larr; Previous</button>
-      <span class="page-info" id="pageInfo">1 / 1</span>
-      <button class="btn" id="nextBtn">Next &rarr;</button>
+        <div class="nav-buttons">
+          <button class="btn" id="prevBtn">&larr; Previous</button>
+          <span class="page-info" id="pageInfo">1 / 1</span>
+          <button class="btn" id="nextBtn">Next &rarr;</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -291,7 +406,8 @@
       <button class="btn" onclick="location.reload()" style="margin-left:8px">Retry</button>
     </div>
   </div>
-
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">✓ Đã copy câu hỏi và đáp án!</div>
   <script>
   (function() {
     let questions = [], filtered = [], current = 0, answers = {}, bookmarked = new Set(), mode = 'practice', seconds = 0, timerInterval = null;
@@ -384,8 +500,9 @@
       html += '<span class="q-topic">' + esc(q.topic) + '</span>';
       html += '<span class="q-type">' + q.type.replace(/_/g, ' ') + '</span>';
       if (isMulti) html += '<span class="q-type" style="color:var(--warning)">Select multiple</span>';
+      html += '<button class="btn-copy" onclick="window._copyQuestion('+q.id+')">📋 Copy</button>';
       const bmIcon = bookmarked.has(q.id) ? '&#9733;' : '&#9734;';
-      html += '<button class="btn btn-sm" style="margin-left:auto" onclick="window._toggleBm('+q.id+')">'+bmIcon+'</button>';
+      html += '<button class="btn btn-sm" onclick="window._toggleBm('+q.id+')">'+bmIcon+'</button>';
       html += '</div>';
       html += '<div class="question-text">' + formatPrompt(q.prompt) + '</div>';
 
@@ -538,6 +655,55 @@
       renderQuestion();
     }
 
+    function copyQuestion(qId) {
+      const q = questions.find(x => x.id === qId);
+      if (!q) return;
+      
+      let text = 'Câu hỏi ' + (q.label || 'Q' + q.id) + '\n';
+      text += 'Topic: ' + q.topic + '\n';
+      text += 'Type: ' + q.type + '\n\n';
+      text += 'Đề bài:\n' + q.prompt + '\n\n';
+      
+      if (q.options && q.options.length) {
+        text += 'Các lựa chọn:\n';
+        q.options.forEach(opt => {
+          text += opt.key + '. ' + opt.text + '\n';
+        });
+        text += '\n';
+      }
+      
+      text += 'Đáp án đúng: ' + q.answer.join(', ') + '\n\n';
+      
+      if (q.explanation) {
+        text += 'Giải thích:\n' + q.explanation + '\n';
+      }
+      
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('✓ Đã copy câu hỏi và đáp án!');
+        const btn = event.target.closest('.btn-copy');
+        if (btn) {
+          btn.classList.add('copied');
+          btn.innerHTML = '✓ Copied';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '📋 Copy';
+          }, 2000);
+        }
+      }).catch(err => {
+        showToast('❌ Không thể copy. Vui lòng thử lại!');
+        console.error('Copy failed:', err);
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
     function updateStats() {
       const checked = Object.values(answers).filter(a => a.checked);
       const scored = checked.filter(a => a.correct !== null);
@@ -621,6 +787,7 @@
     window._selYN = selectYesNo;
     window._check = checkAnswer;
     window._toggleBm = toggleBookmark;
+    window._copyQuestion = copyQuestion;
 
     // Event listeners
     document.getElementById('prevBtn').addEventListener('click', prevQ);
